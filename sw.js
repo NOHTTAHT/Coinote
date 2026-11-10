@@ -1,6 +1,6 @@
 /* Keeps a copy of the app on the phone so it opens fast and without internet.
    Only the page and its libraries are cached; money data always comes from Supabase. */
-const CACHE = 'coinote-v1';
+const CACHE = 'coinote-v4';
 const CORE = ['./', './index.html', './config.js', './icon.svg', './manifest.webmanifest'];
 const LIBS = /^https:\/\/(unpkg\.com|cdn\.jsdelivr\.net|fonts\.googleapis\.com|fonts\.gstatic\.com)\//;
 

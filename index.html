@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#FBF5EC">
+<meta name="theme-color" content="#F5F8F6" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0B100D" media="(prefers-color-scheme: dark)">
 <meta name="robots" content="noindex,nofollow">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -19,17 +19,22 @@
 <script src="config.js"></script>
 <style>
 :root{
-  --bg:#FBF5EC; --card:#FFFFFF; --soft:#F5EDE2; --line:#EEE4D6; --ink:#3A332D; --muted:#968A7E;
-  --accent:#FF8A5B; --accent-ink:#FFFFFF; --mint:#5DBB97; --exp:#E5604F; --inc:#2F9D66; --warn:#E9A23B;
-  --shadow:0 6px 18px rgba(120,90,50,.08); --nav:rgba(255,252,247,.94);
+  --bg:#F5F8F6; --card:#FFFFFF; --soft:#EDF2EF; --line:#E1E8E3; --ink:#16201A; --muted:#6A7A70;
+  --accent:#187A50; --accent-ink:#FFFFFF; --accent-text:#187A50; --mint:#2F9A6A; --exp:#D24B3C; --inc:#1F8A5B; --warn:#D9932B;
+  --hero:#0F3A28; --hero-ink:#F2FAF5; --hero-inc:#8FE3B6; --hero-exp:#FFAE9F;
+  --shadow:0 1px 2px rgba(16,40,28,.05),0 4px 12px rgba(16,40,28,.05); --nav:rgba(255,255,255,.94);
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ color-scheme:dark;
-  --bg:#1B1916; --card:#262320; --soft:#2F2B27; --line:#38332D; --ink:#F2ECE4; --muted:#A3988C;
-  --accent:#FF9A6E; --exp:#FF7B6B; --inc:#5CCB91; --shadow:0 6px 18px rgba(0,0,0,.25); --nav:rgba(38,35,32,.94);
+  --bg:#0B100D; --card:#141B17; --soft:#1B241F; --line:#25302A; --ink:#E7F0EA; --muted:#8C9C92;
+  --accent:#3FCB86; --accent-ink:#04140B; --accent-text:#4FD893; --mint:#4FD893; --exp:#FF7B6B; --inc:#4FD893; --warn:#E9A23B;
+  --hero:#123A29; --hero-ink:#F2FAF5; --hero-inc:#8FE3B6; --hero-exp:#FFAE9F;
+  --shadow:0 0 0 1px rgba(231,240,234,.05); --nav:rgba(20,27,23,.94);
 }}
 :root[data-theme="dark"]{ color-scheme:dark;
-  --bg:#1B1916; --card:#262320; --soft:#2F2B27; --line:#38332D; --ink:#F2ECE4; --muted:#A3988C;
-  --accent:#FF9A6E; --exp:#FF7B6B; --inc:#5CCB91; --shadow:0 6px 18px rgba(0,0,0,.25); --nav:rgba(38,35,32,.94);
+  --bg:#0B100D; --card:#141B17; --soft:#1B241F; --line:#25302A; --ink:#E7F0EA; --muted:#8C9C92;
+  --accent:#3FCB86; --accent-ink:#04140B; --accent-text:#4FD893; --mint:#4FD893; --exp:#FF7B6B; --inc:#4FD893; --warn:#E9A23B;
+  --hero:#123A29; --hero-ink:#F2FAF5; --hero-inc:#8FE3B6; --hero-exp:#FFAE9F;
+  --shadow:0 0 0 1px rgba(231,240,234,.05); --nav:rgba(20,27,23,.94);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Mitr,system-ui,sans-serif;font-weight:300;font-size:15px}
@@ -80,11 +85,13 @@ h2{font-size:15px;font-weight:500;margin:22px 4px 10px}
 .month b{font-weight:500;font-size:14px;min-width:112px;text-align:center}
 
 /* summary */
-.hero{background:linear-gradient(140deg,#FFB38A 0%,#FF8A5B 55%,#F2716A 100%);color:#fff;border-radius:26px;padding:18px 18px 16px;box-shadow:0 12px 28px rgba(255,120,80,.28);position:relative;overflow:hidden}
-.hero:after{content:"";position:absolute;right:-30px;top:-40px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.14)}
-.hero .big{font-size:30px;font-weight:500;margin:2px 0 12px;position:relative}
-.hero .pair{display:flex;gap:10px;position:relative}
-.hero .pair>div{flex:1;background:rgba(255,255,255,.2);border-radius:16px;padding:9px 12px}
+.hero{background:var(--hero);color:var(--hero-ink);border-radius:24px;padding:20px 20px 16px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.hero .lbl{font-size:12.5px;opacity:.72}
+.hero .exp{color:var(--hero-exp)} .hero .inc{color:var(--hero-inc)}
+.hero .big{font-size:32px;font-weight:500;margin:0 0 16px;letter-spacing:-.01em}
+.hero .pair{display:flex;gap:8px}
+.hero .pair>div{flex:1;background:rgba(255,255,255,.07);border-radius:14px;padding:10px 12px}
+.hero .pair .tiny{opacity:.72}
 .hero .pair .ms{font-size:16px;vertical-align:-3px}
 
 /* list */
@@ -94,7 +101,7 @@ h2{font-size:15px;font-weight:500;margin:22px 4px 10px}
 .txrow{display:flex;align-items:center;gap:12px;padding:10px 4px;width:100%;text-align:left}
 .txrow+.txrow{border-top:1px solid var(--line)}
 .txrow:active{background:var(--soft)}
-.amt{font-weight:500;font-size:15.5px;white-space:nowrap}
+.amt{font-weight:400;font-size:15.5px;white-space:nowrap}
 .empty{text-align:center;padding:36px 10px;color:var(--muted)}
 .empty .ms{font-size:46px;color:var(--line);display:block;margin-bottom:8px}
 
@@ -102,17 +109,19 @@ h2{font-size:15px;font-weight:500;margin:22px 4px 10px}
 nav.bar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--nav);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 10px calc(env(safe-area-inset-bottom) + 6px)}
 nav.bar .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);align-items:center}
 nav.bar button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;color:var(--muted);padding:4px 0}
-nav.bar button.on{color:var(--accent)}
-nav.bar .plus{width:56px;height:56px;margin:-26px auto 0;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;box-shadow:0 8px 20px rgba(255,120,80,.4)}
+nav.bar button.on{color:var(--accent-text)}
+nav.bar .plus{width:56px;height:56px;margin:-26px auto 0;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;box-shadow:0 0 0 4px var(--bg)}
 nav.bar .plus .ms{font-size:30px}
 
 /* sheet */
-.veil{position:fixed;inset:0;background:rgba(30,20,10,.35);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.veil{position:fixed;inset:0;background:rgba(4,14,9,.42);z-index:40;display:flex;align-items:flex-end;justify-content:center}
 .sheet{background:var(--bg);width:100%;max-width:560px;max-height:94vh;overflow:auto;border-radius:26px 26px 0 0;padding:10px 16px calc(env(safe-area-inset-bottom) + 18px);animation:up .22s ease}
 @keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
 .grab{width:42px;height:5px;border-radius:9px;background:var(--line);margin:0 auto 10px}
 .sheethead{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .catgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px 4px;margin-top:12px}
+.drop .catgrid{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:12px 6px;margin-top:8px}
+.opt.add{border-style:dashed;color:var(--muted)}
 .catgrid button{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;color:var(--muted)}
 .catgrid button .dot{opacity:.55;transform:scale(.92);transition:.15s}
 .catgrid button.on{color:var(--ink);font-weight:500}
@@ -120,9 +129,9 @@ nav.bar .plus .ms{font-size:30px}
 .amountbox{background:var(--card);border-radius:20px;padding:12px 16px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow)}
 .amountbox .val{flex:1;text-align:right;font-size:32px;font-weight:500;overflow:hidden;white-space:nowrap}
 .keys{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
-.keys button{height:50px;border-radius:15px;background:var(--card);font-size:20px;font-weight:400;box-shadow:0 2px 6px rgba(120,90,50,.06)}
+.keys button{height:50px;border-radius:15px;background:var(--card);font-size:20px;font-weight:400;box-shadow:0 2px 6px rgba(16,40,28,.06)}
 .keys button.op{background:var(--soft);color:var(--muted);font-size:24px}
-.keys button.ok{background:var(--accent);color:#fff;grid-row:span 2;height:auto;font-size:16px;font-weight:500}
+.keys button.ok{background:var(--accent);color:var(--accent-ink);grid-row:span 2;height:auto;font-size:16px;font-weight:500}
 .opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .opts.three{grid-template-columns:repeat(3,minmax(0,1fr))}
 .opt{display:flex;align-items:center;gap:8px;min-height:46px;padding:8px 11px;border-radius:14px;background:var(--card);border:1.5px solid var(--line);text-align:left;font-size:13.5px;min-width:0}
@@ -131,14 +140,20 @@ nav.bar .plus .ms{font-size:30px}
 .opt.on .bul{border-color:var(--accent)}
 .opt.on .bul:after{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent)}
 .opt[disabled]{opacity:.35}
+.drop .dropbtn{width:100%;min-height:48px}
+.drop .dropbtn .chev{margin-left:auto;color:var(--muted);transition:transform .15s}
+.drop.open .dropbtn{border-color:var(--accent)}
+.drop.open .dropbtn .chev{transform:rotate(180deg)}
+.drop .droplist{margin-top:8px;animation:fade .15s ease}
+@keyframes fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .opt .ms{font-size:19px;flex:none}
 .opt .sub{display:block;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .swap{display:flex;justify-content:center;margin:10px 0 -2px}
-.swap button{width:40px;height:40px;border-radius:50%;background:var(--card);box-shadow:var(--shadow);display:grid;place-items:center;color:var(--accent)}
+.swap button{width:40px;height:40px;border-radius:50%;background:var(--card);box-shadow:var(--shadow);display:grid;place-items:center;color:var(--accent-text)}
 .stat{display:flex;justify-content:space-between;padding:7px 0;font-size:13.5px}
 .stat+.stat{border-top:1px dashed var(--line)}
 .pill{flex:none;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 13px;border-radius:999px;background:var(--card);border:1.5px solid var(--line);font-size:13px}
-.pill.on{border-color:var(--accent);color:var(--accent);font-weight:500}
+.pill.on{border-color:var(--accent);color:var(--accent-text);font-weight:500}
 .pill .ms{font-size:18px}
 
 /* accounts, debts */
@@ -146,28 +161,32 @@ nav.bar .plus .ms{font-size:30px}
 .acc+.acc{border-top:1px solid var(--line)}
 .bar2{height:8px;border-radius:9px;background:var(--soft);overflow:hidden;margin-top:8px}
 .bar2>i{display:block;height:100%;border-radius:9px}
-.cc{border-radius:22px;padding:16px;color:#fff;position:relative;overflow:hidden;box-shadow:var(--shadow);width:100%;text-align:left;display:block}
-.cc+.cc{margin-top:12px}
-.cc:after{content:"";position:absolute;right:-40px;bottom:-60px;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.13)}
-.cc .bar2{background:rgba(255,255,255,.3)} .cc .bar2>i{background:#fff}
+.cc{aspect-ratio:1.586;max-height:236px;border-radius:16px;padding:18px 20px;color:#fff;position:relative;overflow:hidden;width:100%;text-align:left;display:flex;flex-direction:column;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),0 10px 24px rgba(4,14,9,.22)}
+.cc .chipcc{width:38px;height:28px;border-radius:6px;margin-top:14px;background:linear-gradient(135deg,#EADBB0,#C8AE74);position:relative;box-shadow:inset 0 0 0 1px rgba(90,70,30,.25)}
+.cc .chipcc:before{content:"";position:absolute;inset:8px 0;border-top:1px solid rgba(90,70,30,.3);border-bottom:1px solid rgba(90,70,30,.3)}
+.cc .chipcc:after{content:"";position:absolute;inset:0 13px;border-left:1px solid rgba(90,70,30,.3);border-right:1px solid rgba(90,70,30,.3)}
+.cc .ccno{font-family:ui-monospace,Menlo,monospace;font-size:14px;letter-spacing:.12em;opacity:.9}
+.cc .bar2{background:rgba(255,255,255,.25);height:6px} .cc .bar2>i{background:#fff}
 
 /* report */
 .legend{display:flex;align-items:center;gap:10px;padding:9px 2px}
 .legend+.legend{border-top:1px solid var(--line)}
 .bars{display:flex;align-items:flex-end;gap:3px;height:110px;margin-top:10px}
-.bars i{flex:1;background:color-mix(in srgb,var(--accent) 75%,transparent);border-radius:5px 5px 2px 2px;min-height:2px}
-.bars i.today{background:var(--exp)}
+.bars i{flex:1;background:color-mix(in srgb,var(--muted) 35%,transparent);border-radius:4px 4px 2px 2px;min-height:2px}
+.bars i.top{background:color-mix(in srgb,var(--accent) 55%,transparent)}
+.bars i.today{background:var(--accent)}
+.acno{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--muted);letter-spacing:.04em}
 
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 92px);transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;z-index:60;font-size:13.5px;max-width:calc(100% - 32px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
 .login{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:24px 20px;max-width:420px;margin:0 auto}
-.login img{width:84px;height:84px;border-radius:24px;box-shadow:0 12px 28px rgba(255,120,80,.3)}
+.login img{width:84px;height:84px;border-radius:24px}
 .code{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--soft);border-radius:12px;padding:10px 12px;word-break:break-all;user-select:all}
 .swatches{display:flex;flex-wrap:wrap;gap:8px}
 .swatches button{width:30px;height:30px;border-radius:50%}
 .swatches button.on{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--ink)}
 .iconpick{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
 .iconpick button{height:38px;border-radius:12px;background:var(--card);display:grid;place-items:center;color:var(--muted)}
-.iconpick button.on{background:var(--accent);color:#fff}
+.iconpick button.on{background:var(--accent);color:var(--accent-ink)}
 .setrow{display:flex;align-items:center;gap:12px;padding:13px 2px;width:100%;text-align:left}
 .setrow+.setrow{border-top:1px solid var(--line)}
 .setrow .ms{color:var(--muted)}
@@ -210,11 +229,11 @@ nav.bar .plus .ms{font-size:30px}
     </div>
 
     <div class="hero">
-      <div class="small" style="opacity:.9;position:relative">คงเหลือเดือนนี้</div>
-      <div class="big num">{{ money(monthIncome - monthExpense, true) }}</div>
+      <div class="lbl">คงเหลือเดือนนี้</div>
+      <div class="big num" :class="monthIncome - monthExpense < 0 ? 'exp' : ''">{{ money(monthIncome - monthExpense, true) }}</div>
       <div class="pair">
-        <div><div class="tiny" style="opacity:.9"><span class="ms">south_west</span> รายรับ</div><div class="b num">{{ money(monthIncome) }}</div></div>
-        <div><div class="tiny" style="opacity:.9"><span class="ms">north_east</span> รายจ่าย</div><div class="b num">{{ money(monthExpense) }}</div></div>
+        <div><div class="tiny"><span class="ms">south_west</span> รายรับ</div><div class="num inc">{{ money(monthIncome) }}</div></div>
+        <div><div class="tiny"><span class="ms">north_east</span> รายจ่าย</div><div class="num exp">{{ money(monthExpense) }}</div></div>
       </div>
     </div>
 
@@ -272,14 +291,14 @@ nav.bar .plus .ms{font-size:30px}
           <text x="60" y="71" text-anchor="middle" font-size="13" fill="var(--ink)" font-family="Mitr" font-weight="500">{{ moneyShort(reportTotal) }}</text>
         </svg>
         <div class="grow small">
-          <div class="muted">เทียบเดือนก่อน</div>
-          <div class="b" style="font-size:17px" :class="reportDelta>0 === (reportKind==='expense') ? 'exp' : 'inc'">{{ reportDelta>=0 ? '+' : '' }}{{ money(reportDelta) }}</div>
+          <div class="muted">{{ !reportDelta ? 'เท่ากับเดือนก่อน' : (reportKind==='expense' ? (reportDelta>0 ? 'ใช้มากกว่าเดือนก่อน' : 'ใช้น้อยกว่าเดือนก่อน') : (reportDelta>0 ? 'รับมากกว่าเดือนก่อน' : 'รับน้อยกว่าเดือนก่อน')) }}</div>
+          <div class="num" style="font-size:17px;font-weight:500" :class="!reportDelta ? '' : reportDelta>0 === (reportKind==='expense') ? 'exp' : 'inc'">{{ money(Math.abs(reportDelta)) }}</div>
           <div class="muted" style="margin-top:8px">เฉลี่ยต่อวัน</div>
-          <div class="b" style="font-size:17px">{{ money(reportTotal / daysSoFar) }}</div>
+          <div class="num" style="font-size:17px;font-weight:500">{{ money(reportTotal / daysSoFar) }}</div>
         </div>
       </div>
       <div class="bars" :title="'รายวัน'">
-        <i v-for="b in dailyBars" :key="b.d" :class="{today:b.today}" :style="{height: b.h + '%'}"></i>
+        <i v-for="b in dailyBars" :key="b.d" :class="{today:b.today, top:b.top && !b.today}" :style="{height: b.h + '%'}"></i>
       </div>
       <div class="row between tiny muted" style="margin-top:4px"><span>1</span><span>{{ Math.ceil(dailyBars.length/2) }}</span><span>{{ dailyBars.length }}</span></div>
     </div>
@@ -299,10 +318,10 @@ nav.bar .plus .ms{font-size:30px}
   <!-- ───────── wallets: accounts and debts ───────── -->
   <template v-if="tab==='wallet'">
     <div class="top"><h1>กระเป๋าเงิน</h1><button class="iconbtn" @click="newWalletItem" aria-label="เพิ่ม"><span class="ms">add</span></button></div>
-    <div class="card" style="background:linear-gradient(140deg,#7BCFB0,#4FAE8C);color:#fff">
-      <div class="small" style="opacity:.9">ความมั่งคั่งสุทธิ</div>
-      <div class="num" style="font-size:28px;font-weight:500;margin:2px 0 10px">{{ money(netWorth, true) }}</div>
-      <div class="row small" style="gap:14px;opacity:.95;flex-wrap:wrap">
+    <div class="card" style="padding:20px">
+      <div class="small muted">ความมั่งคั่งสุทธิ</div>
+      <div class="num" style="font-size:28px;font-weight:500;margin:0 0 10px" :class="netWorth<0 ? 'exp' : ''">{{ money(netWorth, true) }}</div>
+      <div class="row small muted num" style="gap:16px;flex-wrap:wrap">
         <span>มีเงิน {{ money(assetsTotal) }}</span><span>หนี้บัตร {{ money(cardDebtTotal) }}</span><span>หนี้อื่น {{ money(debtTotal) }}</span>
       </div>
     </div>
@@ -315,7 +334,7 @@ nav.bar .plus .ms{font-size:30px}
     <div v-if="walletTab==='acc'" class="card" style="margin-top:12px;padding:4px 14px">
       <button v-for="a in bankAccounts" :key="a.id" class="acc" @click="editAccount(a)">
         <div class="dot" :style="{background:a.color||'#999'}"><span class="ms">{{ a.icon || 'account_balance' }}</span></div>
-        <div class="grow"><div class="ell">{{ a.name }}</div><div class="tiny muted ell">{{ kindLabel[a.kind] }}<span v-if="acctNo(a)"> · {{ maskNo(acctNo(a)) }}</span><span v-else-if="digitsOf(a)"> · ลงท้าย {{ digitsOf(a) }}</span></div></div>
+        <div class="grow"><div class="ell">{{ a.name }}</div><div class="tiny muted ell">{{ kindLabel[a.kind] }}<span v-if="last4(a)"> · <span class="acno">••{{ last4(a) }}</span></span></div></div>
         <div class="b num" :class="balance(a)<0 ? 'exp' : ''">{{ money(balance(a), true) }}</div>
       </button>
       <div v-if="!bankAccounts.length" class="empty small">ยังไม่มีบัญชี</div>
@@ -341,15 +360,17 @@ nav.bar .plus .ms{font-size:30px}
     <div class="top"><h1>บัตรเครดิต</h1><button class="iconbtn" @click="editAccount({kind:'credit'})" aria-label="เพิ่มบัตร"><span class="ms">add_card</span></button></div>
     <div v-if="!cards.length" class="card empty small"><span class="ms">credit_card</span>ยังไม่มีบัตรเครดิต กดปุ่มมุมขวาบนเพื่อเพิ่ม</div>
     <template v-else>
-      <div v-if="cards.length>1" class="opts" style="margin-bottom:12px">
+      <b-drop v-if="cards.length>1" style="margin-bottom:12px" :label="card?.name" icon="credit_card" :color="card?.color" :sub="card ? 'ต้องจ่าย ' + money(cardCycle(card).due) : ''">
         <b-opt v-for="c in cards" :key="c.id" :on="card && card.id===c.id" icon="credit_card" :color="c.color" :sub="'ต้องจ่าย ' + money(cardCycle(c).due)" @pick="cardId=c.id">{{ c.name }}</b-opt>
-      </div>
-      <button class="cc" :style="{background:'linear-gradient(135deg,'+(card.color||'#f08a24')+','+shade(card.color||'#f08a24')+')'}" @click="editAccount(card)">
-        <div class="row between" style="position:relative"><span class="b">{{ card.name }}</span><span class="ms">contactless</span></div>
-        <div class="tiny" style="opacity:.85;margin-top:14px;position:relative">ยอดใช้ทั้งหมด (รวมยอดผ่อนที่เหลือ)</div>
-        <div class="num" style="font-size:24px;font-weight:500;position:relative">{{ money(cardUsed(card)) }}</div>
-        <div class="bar2" style="position:relative"><i :style="{width: Math.min(100, card.credit_limit ? cardUsed(card)/card.credit_limit*100 : 0)+'%'}"></i></div>
-        <div class="row between tiny" style="margin-top:8px;opacity:.92;position:relative">
+      </b-drop>
+      <button class="cc" :style="{background:'linear-gradient(160deg,'+(card.color||'#f08a24')+','+shade(card.color||'#f08a24')+')'}" @click="editAccount(card)">
+        <div class="row between"><span class="b">{{ card.name }}</span><span class="ms" style="opacity:.85">contactless</span></div>
+        <div class="row between" style="align-items:flex-end"><div class="chipcc"></div><span v-if="last4(card)" class="ccno">•••• {{ last4(card) }}</span></div>
+        <div style="flex:1"></div>
+        <div class="tiny" style="opacity:.8">ยอดใช้ทั้งหมด รวมยอดผ่อนที่เหลือ</div>
+        <div class="num" style="font-size:24px;font-weight:500">{{ money(cardUsed(card)) }}</div>
+        <div class="bar2"><i :style="{width: Math.min(100, card.credit_limit ? cardUsed(card)/card.credit_limit*100 : 0)+'%'}"></i></div>
+        <div class="row between tiny" style="margin-top:8px;opacity:.9">
           <span>วงเงินเหลือ {{ money(Math.max(0,(card.credit_limit||0) - cardUsed(card))) }}</span>
           <span>ตัดรอบทุกวันที่ {{ card.statement_day || '-' }}</span>
         </div>
@@ -498,51 +519,56 @@ nav.bar .plus .ms{font-size:30px}
     </div>
     <p v-if="expr && /[+\-−]/.test(expr.slice(1))" class="small muted" style="text-align:right;margin:4px 6px 0">= {{ money(evalExpr()) }}</p>
 
-    <div v-if="showCats" class="catgrid">
-      <button v-for="c in categoriesOf(draft.kind==='income' ? 'income' : 'expense')" :key="c.id" :class="{on:draft.category_id===c.id}" :style="{color:c.color}" @click="draft.category_id=c.id">
-        <div class="dot" :style="{background:c.color}"><span class="ms">{{ c.icon }}</span></div>
-        <span class="ell" style="max-width:64px;color:var(--ink)">{{ c.name }}</span>
-      </button>
+    <div v-if="showCats" class="field"><span>หมวดหมู่</span>
+      <b-drop plain placeholder="เลือกหมวด" :label="draftCat?.name" :icon="draftCat?.icon || 'category'" :color="draftCat?.color">
+        <div class="catgrid">
+          <button v-for="c in categoriesOf(draft.kind==='income' ? 'income' : 'expense')" :key="c.id" data-pick :class="{on:draft.category_id===c.id}" :style="{color:c.color}" @click="draft.category_id=c.id">
+            <div class="dot" :style="{background:c.color}"><span class="ms">{{ c.icon }}</span></div>
+            <span class="ell" style="max-width:64px;color:var(--ink)">{{ c.name }}</span>
+          </button>
+          <button data-pick @click="addFromTx('category')"><div class="dot" style="background:var(--soft);color:var(--muted)"><span class="ms">add</span></div><span style="color:var(--muted)">เพิ่มหมวด</span></button>
+        </div>
+      </b-drop>
     </div>
 
     <!-- expense / income -->
     <div v-if="draft.kind==='expense' || draft.kind==='income'" class="field"><span>{{ draft.kind==='income' ? 'เข้าบัญชี' : 'จ่ายจากบัญชี' }}</span>
-      <div class="opts"><b-opt v-for="a in cashAccounts" :key="a.id" :on="draft.account_id===a.id" :icon="a.icon || 'account_balance'" :color="a.color" @pick="draft.account_id=a.id">{{ a.name }}</b-opt></div>
+      <b-drop :label="accById[draft.account_id]?.name" :icon="accById[draft.account_id]?.icon || 'account_balance'" :color="accById[draft.account_id]?.color"><b-opt v-for="a in cashAccounts" :key="a.id" :on="draft.account_id===a.id" :icon="a.icon || 'account_balance'" :color="a.color" @pick="draft.account_id=a.id">{{ a.name }}</b-opt><button type="button" class="opt add" @click="addFromTx('account','account_id')"><span class="ms">add</span>เพิ่มบัญชี</button></b-drop>
     </div>
 
     <!-- transfer between own accounts -->
     <template v-if="draft.kind==='transfer'">
       <div class="field"><span>โอนจาก</span>
-        <div class="opts"><b-opt v-for="a in cashAccounts" :key="a.id" :on="draft.account_id===a.id" :icon="a.icon || 'account_balance'" :color="a.color" :sub="money(balance(a), true)" @pick="pickFrom(a.id)">{{ a.name }}</b-opt></div>
+        <b-drop :label="accById[draft.account_id]?.name" :icon="accById[draft.account_id]?.icon || 'account_balance'" :color="accById[draft.account_id]?.color" :sub="accById[draft.account_id] ? 'คงเหลือ ' + money(balance(accById[draft.account_id]), true) : ''"><b-opt v-for="a in cashAccounts" :key="a.id" :on="draft.account_id===a.id" :icon="a.icon || 'account_balance'" :color="a.color" :sub="money(balance(a), true)" @pick="pickFrom(a.id)">{{ a.name }}</b-opt><button type="button" class="opt add" @click="addFromTx('account','account_id')"><span class="ms">add</span>เพิ่มบัญชี</button></b-drop>
       </div>
       <div class="swap"><button @click="swapAccounts" aria-label="สลับต้นทางปลายทาง"><span class="ms">swap_vert</span></button></div>
       <div class="field" style="margin-top:0"><span>ไปบัญชี</span>
-        <div class="opts"><b-opt v-for="a in cashAccounts" :key="a.id" :on="draft.to_account_id===a.id" :disabled="a.id===draft.account_id" :icon="a.icon || 'account_balance'" :color="a.color" :sub="money(balance(a), true)" @pick="draft.to_account_id=a.id">{{ a.name }}</b-opt></div>
+        <b-drop :label="accById[draft.to_account_id]?.name" :icon="accById[draft.to_account_id]?.icon || 'account_balance'" :color="accById[draft.to_account_id]?.color" :sub="accById[draft.to_account_id] ? 'คงเหลือ ' + money(balance(accById[draft.to_account_id]), true) : ''"><b-opt v-for="a in cashAccounts" :key="a.id" :on="draft.to_account_id===a.id" :disabled="a.id===draft.account_id" :icon="a.icon || 'account_balance'" :color="a.color" :sub="money(balance(a), true)" @pick="draft.to_account_id=a.id">{{ a.name }}</b-opt><button type="button" class="opt add" @click="addFromTx('account','to_account_id')"><span class="ms">add</span>เพิ่มบัญชี</button></b-drop>
       </div>
     </template>
 
     <!-- credit card -->
     <template v-if="draft.kind==='card'">
       <div class="field"><span>บัตร</span>
-        <div class="opts"><b-opt v-for="c in cards" :key="c.id" :on="draft.card_id===c.id" icon="credit_card" :color="c.color" :sub="'วงเงินเหลือ ' + money(Math.max(0,(c.credit_limit||0)-cardUsed(c)))" @pick="draft.card_id=c.id; if (draft.cardMode==='pay') payOption(draft.payOpt)">{{ c.name }}</b-opt></div>
+        <b-drop :label="draftCard?.name" icon="credit_card" :color="draftCard?.color" :sub="draftCard ? 'วงเงินเหลือ ' + money(Math.max(0,(draftCard.credit_limit||0)-cardUsed(draftCard))) : ''"><b-opt v-for="c in cards" :key="c.id" :on="draft.card_id===c.id" icon="credit_card" :color="c.color" :sub="'วงเงินเหลือ ' + money(Math.max(0,(c.credit_limit||0)-cardUsed(c)))" @pick="draft.card_id=c.id; if (draft.cardMode==='pay') payOption(draft.payOpt)">{{ c.name }}</b-opt></b-drop>
       </div>
       <template v-if="draft.cardMode==='spend'">
         <div class="field"><span>รูปแบบการจ่าย</span>
-          <div class="opts">
+          <b-drop :label="{full:'จ่ายเต็ม',install:'ผ่อนชำระ',monthly:'รายเดือน (สมาชิก)'}[draft.planType]" :icon="{full:'bolt',install:'calendar_month',monthly:'autorenew'}[draft.planType]">
             <b-opt :on="draft.planType==='full'" icon="bolt" sub="ซื้อครั้งเดียว" @pick="pickPlan('full')">จ่ายเต็ม</b-opt>
             <b-opt :on="draft.planType==='install'" icon="calendar_month" sub="ลงค่างวดทุกรอบบิล" @pick="pickPlan('install')">ผ่อนชำระ</b-opt>
             <b-opt :on="draft.planType==='monthly'" icon="autorenew" sub="Netflix, iCloud ฯลฯ" @pick="pickPlan('monthly')">รายเดือน (สมาชิก)</b-opt>
-          </div>
+          </b-drop>
         </div>
         <p v-if="draft.planType==='monthly'" class="small muted" style="margin:10px 4px 0">ใส่ค่าสมาชิกต่อเดือน ระบบจะลงเป็นรายจ่ายให้เองทุกรอบบิลจนกว่าจะกดยกเลิก
           <button v-if="draft.id && !draft.ended_at" class="chip warn" style="margin-left:4px" @click="endPlan">ยกเลิกสมาชิก</button>
           <span v-if="draft.ended_at" class="chip">ยกเลิกแล้ว</span></p>
         <template v-if="draft.planType==='install'">
           <div class="field"><span>จำนวนงวด (เดือน)</span>
-            <div class="opts three"><b-opt v-for="m in [3,4,6,10,12,24]" :key="m" :on="draft.installment_months===m" @pick="draft.installment_months=m">{{ m }} เดือน</b-opt></div>
+            <b-drop three :label="draft.installment_months ? draft.installment_months + ' เดือน' : ''" icon="event_repeat"><b-opt v-for="m in [3,4,6,10,12,24]" :key="m" :on="draft.installment_months===m" @pick="draft.installment_months=m">{{ m }} เดือน</b-opt></b-drop>
           </div>
           <div class="field"><span>ดอกเบี้ย</span>
-            <div class="opts three"><b-opt v-for="r in [0,0.69,0.89]" :key="r" :on="+draft.installment_rate===r" @pick="draft.installment_rate=r">{{ r ? r + '% / เดือน' : '0%' }}</b-opt></div>
+            <b-drop three :label="+draft.installment_rate ? draft.installment_rate + '% / เดือน' : '0%'" icon="percent"><b-opt v-for="r in [0,0.69,0.89]" :key="r" :on="+draft.installment_rate===r" @pick="draft.installment_rate=r">{{ r ? r + '% / เดือน' : '0%' }}</b-opt></b-drop>
           </div>
           <p class="small" style="margin:10px 4px 0">ผ่อนเดือนละ <b class="num">{{ money(planMonthly(evalExpr(), draft.installment_months, draft.installment_rate)) }}</b> × {{ draft.installment_months }} งวด
             <span class="muted">รวม {{ money(planMonthly(evalExpr(), draft.installment_months, draft.installment_rate) * draft.installment_months) }}</span></p>
@@ -550,15 +576,15 @@ nav.bar .plus .ms{font-size:30px}
       </template>
       <template v-else>
         <div class="field"><span>ชำระจากบัญชี</span>
-          <div class="opts"><b-opt v-for="a in cashAccounts" :key="a.id" :on="draft.account_id===a.id" :icon="a.icon || 'account_balance'" :color="a.color" :sub="money(balance(a), true)" @pick="draft.account_id=a.id">{{ a.name }}</b-opt></div>
+          <b-drop :label="accById[draft.account_id]?.name" :icon="accById[draft.account_id]?.icon || 'account_balance'" :color="accById[draft.account_id]?.color" :sub="accById[draft.account_id] ? 'คงเหลือ ' + money(balance(accById[draft.account_id]), true) : ''"><b-opt v-for="a in cashAccounts" :key="a.id" :on="draft.account_id===a.id" :icon="a.icon || 'account_balance'" :color="a.color" :sub="money(balance(a), true)" @pick="draft.account_id=a.id">{{ a.name }}</b-opt><button type="button" class="opt add" @click="addFromTx('account','account_id')"><span class="ms">add</span>เพิ่มบัญชี</button></b-drop>
         </div>
         <div class="field"><span>ยอดที่ชำระ</span>
-          <div class="opts">
+          <b-drop :label="{due:'เต็มยอดรอบนี้',min:'ขั้นต่ำ 8%',all:'ปิดยอดทั้งหมด',custom:'กรอกเอง'}[draft.payOpt]" icon="payments">
             <b-opt :on="draft.payOpt==='due'" :sub="money(draftCycle.due)" @pick="payOption('due')">เต็มยอดรอบนี้</b-opt>
             <b-opt :on="draft.payOpt==='min'" :sub="money(draftCycle.min)" @pick="payOption('min')">ขั้นต่ำ 8%</b-opt>
             <b-opt :on="draft.payOpt==='all'" :sub="money(draftCard ? cardUsed(draftCard) : 0)" @pick="payOption('all')">ปิดยอดทั้งหมด</b-opt>
             <b-opt :on="draft.payOpt==='custom'" sub="ใช้แป้นตัวเลข" @pick="payOption('custom')">กรอกเอง</b-opt>
-          </div>
+          </b-drop>
         </div>
       </template>
     </template>
@@ -568,10 +594,10 @@ nav.bar .plus .ms{font-size:30px}
       <label class="field" style="width:46%"><span>วันเวลา</span><input class="input" type="datetime-local" v-model="draft.when"></label>
     </div>
     <div v-if="draft.kind==='expense' && openDebts.length" class="field"><span>เป็นการจ่ายหนี้ไหม</span>
-      <div class="opts">
+      <b-drop :label="draft.debt_id ? openDebts.find(d=>d.id===draft.debt_id)?.name : 'ไม่ใช่'" :icon="draft.debt_id ? 'request_quote' : ''" color="#a0785a">
         <b-opt :on="!draft.debt_id" @pick="draft.debt_id=null">ไม่ใช่</b-opt>
         <b-opt v-for="d in openDebts" :key="d.id" :on="draft.debt_id===d.id" icon="request_quote" color="#a0785a" @pick="draft.debt_id=d.id">{{ d.name }}</b-opt>
-      </div>
+      </b-drop>
     </div>
 
     <div class="keys">
@@ -593,7 +619,7 @@ nav.bar .plus .ms{font-size:30px}
   <div class="sheet">
     <div class="grab"></div>
     <div class="sheethead"><h1>{{ draft.id ? 'แก้ไข' : 'เพิ่ม' }}{{ draft.kind==='credit' ? 'บัตรเครดิต' : 'บัญชี' }}</h1><button class="iconbtn" @click="sheet=null"><span class="ms">close</span></button></div>
-    <div class="opts"><b-opt v-for="(t,k) in kindLabel" :key="k" :on="draft.kind===k" :icon="kindIcon[k]" @pick="draft.kind=k">{{ t }}</b-opt></div>
+    <div class="field" style="margin-top:0"><span>ประเภท</span><b-drop :label="kindLabel[draft.kind]" :icon="kindIcon[draft.kind]"><b-opt v-for="(t,k) in kindLabel" :key="k" :on="draft.kind===k" :icon="kindIcon[k]" @pick="draft.kind=k">{{ t }}</b-opt></b-drop></div>
     <label class="field"><span>ชื่อ</span><input class="input" v-model="draft.name" placeholder="เช่น ttb ค่าใช้จ่าย"></label>
     <label class="field"><span>{{ draft.kind==='credit' ? 'ยอดค้างชำระตอนนี้ (ไม่รวมงวดผ่อนที่ยังไม่เรียกเก็บ)' : 'ยอดเงินคงเหลือตอนนี้ (ดูจากแอปธนาคาร)' }}</span><input class="input" type="number" inputmode="decimal" v-model.number="draft.openingInput"></label>
     <template v-if="draft.kind==='credit'">
@@ -803,7 +829,7 @@ createApp({
     accounts:[], categories:[], debts:[], tx:[], rules:[], settings:{ token:'', my_names:[] },
     tab:'home', walletTab:'acc', cardId:null, reportKind:'expense', catKind:'expense',
     month: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-    sheet:null, draft:{}, asking:null, importing:false, expr:'', showRaw:false, showToken:false, toast:'', toastTimer:null,
+    sheet:null, stash:null, draft:{}, asking:null, importing:false, expr:'', showRaw:false, showToken:false, toast:'', toastTimer:null,
     testText:'', testResult:'', myNamesText:'', theme: safe.get('coinote-theme') || 'auto',
     themes:[{v:'auto',t:'อัตโนมัติ'},{v:'light',t:'สว่าง'},{v:'dark',t:'มืด'}],
     kindLabel:{ bank:'บัญชีธนาคาร', ewallet:'e-Wallet', cash:'เงินสด', credit:'บัตรเครดิต' },
@@ -882,14 +908,15 @@ createApp({
       const dim = new Date(this.month.getFullYear(), this.month.getMonth()+1, 0).getDate(), v = Array(dim).fill(0);
       this.reportTx.forEach(t=>{ v[new Date(t.occurred_at).getDate()-1] += +t.amount });
       const max = Math.max(...v, 1), now = new Date();
-      return v.map((x,i)=>({ d:i+1, h: x/max*100, today: this.isToday(new Date(this.month.getFullYear(), this.month.getMonth(), i+1)) }));
+      return v.map((x,i)=>({ d:i+1, h: x/max*100, today: this.isToday(new Date(this.month.getFullYear(), this.month.getMonth(), i+1)), top: x>0 && x===max }));
     },
     draftCat(){ return this.catById[this.draft.category_id] },
     draftColor(){ return this.draftIsMove ? (this.draft.kind==='card' ? (this.draftCard?.color || '#f08a24') : '#9aa5b1') : (this.draftCat?.color || '#b8b0a2') },
     draftIcon(){ return this.draft.kind==='transfer' ? 'swap_horiz' : this.draftIsMove ? 'credit_score' : (this.draftCat?.icon || 'category') },
     ingestUrl(){ return (cfg.supabaseUrl||'').replace(/\/$/,'') + '/rest/v1/rpc/cn_ingest_slip' },
   },
-  watch:{ theme:{ immediate:true, handler(v){ v==='auto' ? document.documentElement.removeAttribute('data-theme') : document.documentElement.setAttribute('data-theme', v) } } },
+  watch:{ sheet(v){ if (!v && this.stash){ const b = this.stash; this.stash = null; this.$nextTick(()=>{ this.draft = b.draft; this.expr = b.expr; this.sheet = { type:'tx' } }) } },
+    theme:{ immediate:true, handler(v){ v==='auto' ? document.documentElement.removeAttribute('data-theme') : document.documentElement.setAttribute('data-theme', v) } } },
   async mounted(){
     if (sb){
       const { data } = await sb.auth.getSession();
@@ -914,8 +941,9 @@ createApp({
       if (d < t) d = new Date(t.getFullYear(), t.getMonth()+1, Math.min(day, new Date(t.getFullYear(), t.getMonth()+2, 0).getDate()));
       return d },
     nextDate(day){ return this.nextDue(day).toLocaleDateString('th-TH',{ day:'numeric', month:'short' }) },
-    shade(hex){ const n = parseInt(hex.slice(1),16); const f = c => Math.max(0, Math.round(c*0.72));
+    shade(hex){ const n = parseInt(hex.slice(1),16); const f = c => Math.max(0, Math.round(c*0.84));
       return '#' + [f(n>>16), f((n>>8)&255), f(n&255)].map(x=>x.toString(16).padStart(2,'0')).join('') },
+    last4(a){ const n = this.acctNo(a); if (n) { const d = n.replace(/\D/g,''); return d.length>=10 && d.length<=12 ? d.slice(-5,-1) : d.slice(-4) } const g = this.digitsOf(a); return g ? String(g).trim().slice(-4) : '' },
     digitsOf(a){ return (a.match||[]).find(m=>/^\d{3,}$/.test(String(m).trim())) },
     /* the full account number is kept in the match list as "no:<digits>"; its last 4 digits are what slips show */
     acctNo(a){ const m = (a.match||[]).find(x=>String(x).startsWith('no:')); return m ? m.slice(3) : '' },
@@ -1139,7 +1167,8 @@ createApp({
           return [...(no ? ['no:' + no] : []), ...auto, ...terms] })(), sort: d.sort ?? this.accounts.length+1, archived:false };
       if (d.id) row.id = d.id;
       const saved = await this.upsert('cn_accounts', row);
-      if (saved){ this.sheet = null; this.say('บันทึกแล้ว'); if (saved.kind==='credit'){ this.cardId = saved.id; this.tab = 'cards' } }
+      if (saved){ const back = this.stash; if (back && saved.id && saved.kind!=='credit'){ back.draft[back.field] = saved.id }
+        this.sheet = null; this.say('บันทึกแล้ว'); if (saved.kind==='credit' && !back){ this.cardId = saved.id; this.tab = 'cards' } }
     },
     async archiveAccount(){ if (!(await this.ask('ซ่อนบัญชีนี้? รายการเก่ายังอยู่ครบ'))) return;
       const { openingInput, matchText, acctNoInput, ...row } = this.draft; await this.upsert('cn_accounts', { ...row, archived:true }); this.sheet = null },
@@ -1150,10 +1179,13 @@ createApp({
     async closeDebt(){ if (!(await this.ask('ปิดหนี้นี้ (จ่ายครบแล้ว)?'))) return; await this.upsert('cn_debts', { ...this.draft, closed:true }); this.sheet = null; this.say('ยินดีด้วย ปิดหนี้แล้ว') },
     payDebt(d){ const c = this.categories.find(c=>c.name==='ผ่อนหนี้' && c.kind==='expense');
       this.newTx({ kind:'expense', category_id: c?.id || null, debt_id: d.id, payee: d.lender || d.name, amount: d.monthly || '' }) },
+    addFromTx(type, field){ this.stash = { draft:this.draft, expr:this.expr, field: field || 'account_id' };
+      if (type==='category'){ this.editCategory(null); this.draft.kind = this.stash.draft.kind==='income' ? 'income' : 'expense' } else this.editAccount({ kind:'bank' }) },
     editCategory(c){ this.draft = c ? { ...c, keywordsText:(c.keywords||[]).join(', ') } : { name:'', kind:this.catKind, icon:'category', color:'#f28b66', keywordsText:'' }; this.sheet = { type:'category' } },
     async saveCategory(){ const d = this.draft; if (!d.name.trim()){ this.say('ตั้งชื่อก่อน'); return }
       const row = { name:d.name.trim(), kind:d.kind, icon:d.icon, color:d.color, keywords:d.keywordsText.split(',').map(s=>s.trim()).filter(Boolean), sort: d.sort ?? this.categories.length+1, archived:false };
-      if (d.id) row.id = d.id; if (await this.upsert('cn_categories', row)){ this.sheet = null; this.say('บันทึกแล้ว') } },
+      if (d.id) row.id = d.id; const saved = await this.upsert('cn_categories', row);
+      if (saved){ if (this.stash && saved.id && saved.kind === (this.stash.draft.kind==='income' ? 'income' : 'expense')) this.stash.draft.category_id = saved.id; this.sheet = null; this.say('บันทึกแล้ว') } },
     async archiveCategory(){ if (!(await this.ask('ลบหมวดหมู่นี้? รายการเก่ายังอยู่'))) return; const { keywordsText, ...row } = this.draft; await this.upsert('cn_categories', { ...row, archived:true }); this.sheet = null },
 
     /* ── settings ── */
@@ -1223,6 +1255,16 @@ createApp({
       const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'coinote.csv'; a.click();
     },
   }
+}).component('b-drop', {
+  props:{ label:String, icon:String, color:String, sub:String, three:Boolean, plain:Boolean, placeholder:String },
+  data(){ return { open:false } },
+  methods:{ picked(e){ const b = e.target.closest('.opt,[data-pick]'); if (b && !b.disabled) this.open = false } },
+  template:`<div class="drop" :class="{open}">
+    <button type="button" class="opt dropbtn" :aria-expanded="open" @click="open=!open">
+      <span v-if="icon" class="ms" :style="{color: color || 'var(--muted)'}">{{ icon }}</span>
+      <span class="grow" style="min-width:0"><span class="ell" style="display:block" :class="{muted:!label}">{{ label || placeholder || 'เลือก' }}</span><span v-if="sub" class="sub num">{{ sub }}</span></span>
+      <span class="ms chev">expand_more</span></button>
+    <div v-if="open" class="droplist" :class="{opts:!plain, three}" @click="picked"><slot></slot></div></div>`
 }).component('b-opt', {
   props:{ on:Boolean, icon:String, color:String, sub:String, disabled:Boolean },
   emits:['pick'],
