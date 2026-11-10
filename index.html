@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FBF5EC">
+<meta name="robots" content="noindex,nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Coinote">
+<title>Coinote</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,500,1,0&display=block" rel="stylesheet">
+<script src="https://unpkg.com/vue@3.4.38/dist/vue.global.prod.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<style>
+:root{
+  --bg:#FBF5EC; --card:#FFFFFF; --soft:#F5EDE2; --line:#EEE4D6; --ink:#3A332D; --muted:#968A7E;
+  --accent:#FF8A5B; --accent-ink:#FFFFFF; --mint:#5DBB97; --exp:#E5604F; --inc:#2F9D66; --warn:#E9A23B;
+  --shadow:0 6px 18px rgba(120,90,50,.08); --nav:rgba(255,252,247,.94);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ color-scheme:dark;
+  --bg:#1B1916; --card:#262320; --soft:#2F2B27; --line:#38332D; --ink:#F2ECE4; --muted:#A3988C;
+  --accent:#FF9A6E; --exp:#FF7B6B; --inc:#5CCB91; --shadow:0 6px 18px rgba(0,0,0,.25); --nav:rgba(38,35,32,.94);
+}}
+:root[data-theme="dark"]{ color-scheme:dark;
+  --bg:#1B1916; --card:#262320; --soft:#2F2B27; --line:#38332D; --ink:#F2ECE4; --muted:#A3988C;
+  --accent:#FF9A6E; --exp:#FF7B6B; --inc:#5CCB91; --shadow:0 6px 18px rgba(0,0,0,.25); --nav:rgba(38,35,32,.94);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Mitr,system-ui,sans-serif;font-weight:300;font-size:15px}
+body{min-height:100vh;overscroll-behavior-y:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+[v-cloak]{display:none}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:22px;line-height:1;display:inline-block;letter-spacing:normal;text-transform:none;white-space:nowrap;direction:ltr;-webkit-font-smoothing:antialiased;font-feature-settings:'liga'}
+.wrap{max-width:560px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 10px) 16px calc(env(safe-area-inset-bottom) + 96px)}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.grow{flex:1;min-width:0}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+.tiny{font-size:11px}
+.b{font-weight:500}
+.num{font-variant-numeric:tabular-nums}
+.exp{color:var(--exp)} .inc{color:var(--inc)}
+.card{background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:16px}
+.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex:none;color:#fff}
+.dot .ms{font-size:21px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;background:var(--soft);font-size:11.5px;color:var(--muted)}
+.chip.slip{background:color-mix(in srgb,var(--mint) 18%,transparent);color:var(--mint)}
+.chip.warn{background:color-mix(in srgb,var(--warn) 20%,transparent);color:#b77713}
+.iconbtn{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--card);box-shadow:var(--shadow)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:46px;padding:0 18px;border-radius:16px;background:var(--accent);color:var(--accent-ink);font-weight:500}
+.btn.ghost{background:var(--soft);color:var(--ink)}
+.btn.danger{background:color-mix(in srgb,var(--exp) 14%,transparent);color:var(--exp)}
+.btn.block{width:100%}
+.field{display:block;margin-top:12px}
+.field>span{display:block;font-size:12.5px;color:var(--muted);margin:0 0 5px 4px}
+.input{width:100%;height:46px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);padding:0 14px;outline:none}
+textarea.input{height:auto;min-height:96px;padding:12px 14px;line-height:1.5}
+.input:focus{border-color:var(--accent)}
+.seg{display:flex;background:var(--soft);border-radius:14px;padding:4px;gap:4px}
+.seg button{flex:1;height:36px;border-radius:11px;color:var(--muted);font-weight:400}
+.seg button.on{background:var(--card);color:var(--ink);font-weight:500;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+h1{font-size:20px;font-weight:500;margin:0}
+h2{font-size:15px;font-weight:500;margin:22px 4px 10px}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;padding:6px 2px 14px}
+.brand{display:flex;align-items:center;gap:9px}
+.brand img{width:34px;height:34px;border-radius:11px}
+.month{display:flex;align-items:center;gap:4px;background:var(--card);border-radius:999px;padding:4px;box-shadow:var(--shadow)}
+.month button{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
+.month b{font-weight:500;font-size:14px;min-width:112px;text-align:center}
+
+/* summary */
+.hero{background:linear-gradient(140deg,#FFB38A 0%,#FF8A5B 55%,#F2716A 100%);color:#fff;border-radius:26px;padding:18px 18px 16px;box-shadow:0 12px 28px rgba(255,120,80,.28);position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-30px;top:-40px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.14)}
+.hero .big{font-size:30px;font-weight:500;margin:2px 0 12px;position:relative}
+.hero .pair{display:flex;gap:10px;position:relative}
+.hero .pair>div{flex:1;background:rgba(255,255,255,.2);border-radius:16px;padding:9px 12px}
+.hero .pair .ms{font-size:16px;vertical-align:-3px}
+
+/* list */
+.day{margin-top:14px}
+.dayhead{display:flex;justify-content:space-between;align-items:baseline;padding:0 6px 6px;font-size:12.5px;color:var(--muted)}
+.dayhead b{color:var(--ink);font-weight:500;font-size:14px}
+.txrow{display:flex;align-items:center;gap:12px;padding:10px 4px;width:100%;text-align:left}
+.txrow+.txrow{border-top:1px solid var(--line)}
+.txrow:active{background:var(--soft)}
+.amt{font-weight:500;font-size:15.5px;white-space:nowrap}
+.empty{text-align:center;padding:36px 10px;color:var(--muted)}
+.empty .ms{font-size:46px;color:var(--line);display:block;margin-bottom:8px}
+
+/* nav */
+nav.bar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--nav);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 10px calc(env(safe-area-inset-bottom) + 6px)}
+nav.bar .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);align-items:center}
+nav.bar button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;color:var(--muted);padding:4px 0}
+nav.bar button.on{color:var(--accent)}
+nav.bar .plus{width:56px;height:56px;margin:-26px auto 0;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;box-shadow:0 8px 20px rgba(255,120,80,.4)}
+nav.bar .plus .ms{font-size:30px}
+
+/* sheet */
+.veil{position:fixed;inset:0;background:rgba(30,20,10,.35);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:560px;max-height:94vh;overflow:auto;border-radius:26px 26px 0 0;padding:10px 16px calc(env(safe-area-inset-bottom) + 18px);animation:up .22s ease}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+.grab{width:42px;height:5px;border-radius:9px;background:var(--line);margin:0 auto 10px}
+.sheethead{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.catgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px 4px;margin-top:12px}
+.catgrid button{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;color:var(--muted)}
+.catgrid button .dot{opacity:.55;transform:scale(.92);transition:.15s}
+.catgrid button.on{color:var(--ink);font-weight:500}
+.catgrid button.on .dot{opacity:1;transform:scale(1.06);box-shadow:0 0 0 3px var(--bg),0 0 0 5px currentColor}
+.amountbox{background:var(--card);border-radius:20px;padding:12px 16px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow)}
+.amountbox .val{flex:1;text-align:right;font-size:32px;font-weight:500;overflow:hidden;white-space:nowrap}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.keys button{height:50px;border-radius:15px;background:var(--card);font-size:20px;font-weight:400;box-shadow:0 2px 6px rgba(120,90,50,.06)}
+.keys button.op{background:var(--soft);color:var(--muted);font-size:24px}
+.keys button.ok{background:var(--accent);color:#fff;grid-row:span 2;height:auto;font-size:16px;font-weight:500}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.opts.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.opt{display:flex;align-items:center;gap:8px;min-height:46px;padding:8px 11px;border-radius:14px;background:var(--card);border:1.5px solid var(--line);text-align:left;font-size:13.5px;min-width:0}
+.opt .bul{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center}
+.opt.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--card))}
+.opt.on .bul{border-color:var(--accent)}
+.opt.on .bul:after{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.opt[disabled]{opacity:.35}
+.opt .ms{font-size:19px;flex:none}
+.opt .sub{display:block;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.swap{display:flex;justify-content:center;margin:10px 0 -2px}
+.swap button{width:40px;height:40px;border-radius:50%;background:var(--card);box-shadow:var(--shadow);display:grid;place-items:center;color:var(--accent)}
+.stat{display:flex;justify-content:space-between;padding:7px 0;font-size:13.5px}
+.stat+.stat{border-top:1px dashed var(--line)}
+.pill{flex:none;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 13px;border-radius:999px;background:var(--card);border:1.5px solid var(--line);font-size:13px}
+.pill.on{border-color:var(--accent);color:var(--accent);font-weight:500}
+.pill .ms{font-size:18px}
+
+/* accounts, debts */
+.acc{display:flex;align-items:center;gap:12px;padding:12px 2px;width:100%;text-align:left}
+.acc+.acc{border-top:1px solid var(--line)}
+.bar2{height:8px;border-radius:9px;background:var(--soft);overflow:hidden;margin-top:8px}
+.bar2>i{display:block;height:100%;border-radius:9px}
+.cc{border-radius:22px;padding:16px;color:#fff;position:relative;overflow:hidden;box-shadow:var(--shadow);width:100%;text-align:left;display:block}
+.cc+.cc{margin-top:12px}
+.cc:after{content:"";position:absolute;right:-40px;bottom:-60px;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.13)}
+.cc .bar2{background:rgba(255,255,255,.3)} .cc .bar2>i{background:#fff}
+
+/* report */
+.legend{display:flex;align-items:center;gap:10px;padding:9px 2px}
+.legend+.legend{border-top:1px solid var(--line)}
+.bars{display:flex;align-items:flex-end;gap:3px;height:110px;margin-top:10px}
+.bars i{flex:1;background:color-mix(in srgb,var(--accent) 75%,transparent);border-radius:5px 5px 2px 2px;min-height:2px}
+.bars i.today{background:var(--exp)}
+
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 92px);transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;z-index:60;font-size:13.5px;max-width:calc(100% - 32px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.login{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:24px 20px;max-width:420px;margin:0 auto}
+.login img{width:84px;height:84px;border-radius:24px;box-shadow:0 12px 28px rgba(255,120,80,.3)}
+.code{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--soft);border-radius:12px;padding:10px 12px;word-break:break-all;user-select:all}
+.swatches{display:flex;flex-wrap:wrap;gap:8px}
+.swatches button{width:30px;height:30px;border-radius:50%}
+.swatches button.on{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--ink)}
+.iconpick{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.iconpick button{height:38px;border-radius:12px;background:var(--card);display:grid;place-items:center;color:var(--muted)}
+.iconpick button.on{background:var(--accent);color:#fff}
+.setrow{display:flex;align-items:center;gap:12px;padding:13px 2px;width:100%;text-align:left}
+.setrow+.setrow{border-top:1px solid var(--line)}
+.setrow .ms{color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="app" v-cloak>
+
+<!-- ───────── sign in ───────── -->
+<div v-if="!ready" class="login"><p class="muted" style="text-align:center">กำลังโหลด…</p></div>
+<div v-else-if="!signedIn" class="login">
+  <div style="text-align:center">
+    <img src="icon.svg" alt="">
+    <h1 style="margin-top:16px;font-size:26px">Coinote</h1>
+    <p class="muted" style="margin:6px 0 26px">จดรายรับรายจ่าย อ่านสลิปให้อัตโนมัติ</p>
+  </div>
+  <template v-if="hasCloud">
+    <label class="field"><span>อีเมล</span><input class="input" v-model="login.email" type="email" autocomplete="username"></label>
+    <label class="field"><span>รหัสผ่าน</span><input class="input" v-model="login.password" type="password" autocomplete="current-password" @keyup.enter="signIn"></label>
+    <button class="btn block" style="margin-top:18px" @click="signIn" :disabled="busy">{{ busy ? 'กำลังเข้า…' : 'เข้าสู่ระบบ' }}</button>
+    <p v-if="login.error" class="exp small" style="text-align:center">{{ login.error }}</p>
+  </template>
+  <p v-else class="muted small" style="text-align:center">ยังไม่ได้ตั้งค่า Supabase ใน config.js จึงเปิดได้แค่โหมดตัวอย่าง</p>
+  <button class="btn ghost block" style="margin-top:10px" @click="startDemo">ลองใช้แบบตัวอย่าง (เก็บในเครื่องนี้)</button>
+</div>
+
+<template v-else>
+<div class="wrap">
+
+  <!-- ───────── home ───────── -->
+  <template v-if="tab==='home'">
+    <div class="top">
+      <div class="brand"><img src="icon.svg" alt="Coinote"></div>
+      <div class="month">
+        <button @click="shiftMonth(-1)" aria-label="เดือนก่อน"><span class="ms">chevron_left</span></button>
+        <b>{{ monthLabel }}</b>
+        <button @click="shiftMonth(1)" aria-label="เดือนถัดไป"><span class="ms">chevron_right</span></button>
+      </div>
+      <button class="iconbtn" @click="tab='settings'" aria-label="ตั้งค่า"><span class="ms">settings</span></button>
+    </div>
+
+    <div class="hero">
+      <div class="small" style="opacity:.9;position:relative">คงเหลือเดือนนี้</div>
+      <div class="big num">{{ money(monthIncome - monthExpense, true) }}</div>
+      <div class="pair">
+        <div><div class="tiny" style="opacity:.9"><span class="ms">south_west</span> รายรับ</div><div class="b num">{{ money(monthIncome) }}</div></div>
+        <div><div class="tiny" style="opacity:.9"><span class="ms">north_east</span> รายจ่าย</div><div class="b num">{{ money(monthExpense) }}</div></div>
+      </div>
+    </div>
+
+    <div v-if="dueSoon.length" class="card" style="margin-top:12px;padding:12px 14px">
+      <div v-for="d in dueSoon" :key="d.key" class="row small" style="padding:3px 0">
+        <span class="ms" style="font-size:18px;color:var(--warn)">event</span>
+        <span class="grow ell">{{ d.label }}</span>
+        <span class="muted">{{ d.when }}</span>
+      </div>
+    </div>
+
+    <div v-if="!monthDays.length" class="card empty" style="margin-top:14px">
+      <span class="ms">receipt_long</span>ยังไม่มีรายการเดือนนี้<br><span class="small">กด + เพื่อจด หรือปิดแอปธนาคารหลังโอน ระบบจะอ่านสลิปให้เอง</span>
+    </div>
+    <div v-for="g in monthDays" :key="g.key" class="day">
+      <div class="dayhead">
+        <span><b>{{ g.dayNum }}</b> {{ g.label }}</span>
+        <span class="num"><span v-if="g.inc" class="inc">+{{ money(g.inc) }}</span><span v-if="g.inc && g.exp"> · </span><span v-if="g.exp">-{{ money(g.exp) }}</span></span>
+      </div>
+      <div class="card" style="padding:4px 12px">
+        <button v-for="t in g.items" :key="t.id" class="txrow" @click="openTx(t)">
+          <div class="dot" :style="{background: txColor(t)}"><span class="ms">{{ txIcon(t) }}</span></div>
+          <div class="grow">
+            <div class="ell b" style="font-weight:400">{{ txTitle(t) }}</div>
+            <div class="row small muted" style="gap:6px;margin-top:2px">
+              <span class="ell">{{ txSub(t) }}</span>
+              <span v-if="t.source==='slip' || t.source==='sms'" class="chip slip"><span class="ms" style="font-size:13px">bolt</span>{{ t.source==='sms' ? 'SMS' : 'สลิป' }}</span>
+              <span v-if="!t.account_id && t.kind!=='income'" class="chip warn">เลือกบัญชี</span>
+            </div>
+          </div>
+          <div class="amt num" :class="t.kind==='income' ? 'inc' : t.kind==='expense' ? 'exp' : 'muted'">{{ t.kind==='income' ? '+' : t.kind==='expense' ? '-' : '' }}{{ money(t.amount) }}</div>
+        </button>
+      </div>
+    </div>
+  </template>
+
+  <!-- ───────── report ───────── -->
+  <template v-if="tab==='report'">
+    <div class="top">
+      <h1>สรุป</h1>
+      <div class="month">
+        <button @click="shiftMonth(-1)"><span class="ms">chevron_left</span></button>
+        <b>{{ monthLabel }}</b>
+        <button @click="shiftMonth(1)"><span class="ms">chevron_right</span></button>
+      </div>
+    </div>
+    <div class="seg"><button :class="{on:reportKind==='expense'}" @click="reportKind='expense'">รายจ่าย</button><button :class="{on:reportKind==='income'}" @click="reportKind='income'">รายรับ</button></div>
+    <div class="card" style="margin-top:12px">
+      <div class="row" style="gap:16px">
+        <svg viewBox="0 0 120 120" width="138" height="138" style="flex:none">
+          <circle cx="60" cy="60" r="44" fill="none" stroke="var(--soft)" stroke-width="18"/>
+          <circle v-for="s in donut" :key="s.id" cx="60" cy="60" r="44" fill="none" :stroke="s.color" stroke-width="18"
+            :stroke-dasharray="s.len + ' ' + (276.46 - s.len)" :stroke-dashoffset="-s.off" transform="rotate(-90 60 60)"/>
+          <text x="60" y="56" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="Mitr">รวม</text>
+          <text x="60" y="71" text-anchor="middle" font-size="13" fill="var(--ink)" font-family="Mitr" font-weight="500">{{ moneyShort(reportTotal) }}</text>
+        </svg>
+        <div class="grow small">
+          <div class="muted">เทียบเดือนก่อน</div>
+          <div class="b" style="font-size:17px" :class="reportDelta>0 === (reportKind==='expense') ? 'exp' : 'inc'">{{ reportDelta>=0 ? '+' : '' }}{{ money(reportDelta) }}</div>
+          <div class="muted" style="margin-top:8px">เฉลี่ยต่อวัน</div>
+          <div class="b" style="font-size:17px">{{ money(reportTotal / daysSoFar) }}</div>
+        </div>
+      </div>
+      <div class="bars" :title="'รายวัน'">
+        <i v-for="b in dailyBars" :key="b.d" :class="{today:b.today}" :style="{height: b.h + '%'}"></i>
+      </div>
+      <div class="row between tiny muted" style="margin-top:4px"><span>1</span><span>{{ Math.ceil(dailyBars.length/2) }}</span><span>{{ dailyBars.length }}</span></div>
+    </div>
+    <div class="card" style="margin-top:12px;padding:6px 14px">
+      <div v-if="!byCategory.length" class="empty small">ยังไม่มีข้อมูล</div>
+      <div v-for="c in byCategory" :key="c.id" class="legend">
+        <div class="dot" :style="{background:c.color, width:'34px', height:'34px'}"><span class="ms" style="font-size:18px">{{ c.icon }}</span></div>
+        <div class="grow">
+          <div class="row between"><span class="ell">{{ c.name }}</span><span class="b num">{{ money(c.total) }}</span></div>
+          <div class="bar2" style="margin-top:5px;height:6px"><i :style="{width:c.pct+'%', background:c.color}"></i></div>
+        </div>
+        <span class="small muted num" style="width:38px;text-align:right">{{ Math.round(c.pct) }}%</span>
+      </div>
+    </div>
+  </template>
+
+  <!-- ───────── wallets: accounts and debts ───────── -->
+  <template v-if="tab==='wallet'">
+    <div class="top"><h1>กระเป๋าเงิน</h1><button class="iconbtn" @click="newWalletItem" aria-label="เพิ่ม"><span class="ms">add</span></button></div>
+    <div class="card" style="background:linear-gradient(140deg,#7BCFB0,#4FAE8C);color:#fff">
+      <div class="small" style="opacity:.9">ความมั่งคั่งสุทธิ</div>
+      <div class="num" style="font-size:28px;font-weight:500;margin:2px 0 10px">{{ money(netWorth, true) }}</div>
+      <div class="row small" style="gap:14px;opacity:.95;flex-wrap:wrap">
+        <span>มีเงิน {{ money(assetsTotal) }}</span><span>หนี้บัตร {{ money(cardDebtTotal) }}</span><span>หนี้อื่น {{ money(debtTotal) }}</span>
+      </div>
+    </div>
+    <button class="btn ghost block" style="margin-top:12px" @click="newTx({kind:'transfer'})"><span class="ms">swap_horiz</span> โอนเงินระหว่างบัญชี</button>
+    <div class="seg" style="margin-top:14px">
+      <button :class="{on:walletTab==='acc'}" @click="walletTab='acc'">บัญชี</button>
+      <button :class="{on:walletTab==='debt'}" @click="walletTab='debt'">หนี้สิน</button>
+    </div>
+
+    <div v-if="walletTab==='acc'" class="card" style="margin-top:12px;padding:4px 14px">
+      <button v-for="a in bankAccounts" :key="a.id" class="acc" @click="editAccount(a)">
+        <div class="dot" :style="{background:a.color||'#999'}"><span class="ms">{{ a.icon || 'account_balance' }}</span></div>
+        <div class="grow"><div class="ell">{{ a.name }}</div><div class="tiny muted ell">{{ kindLabel[a.kind] }}<span v-if="digitsOf(a)"> · ลงท้าย {{ digitsOf(a) }}</span></div></div>
+        <div class="b num" :class="balance(a)<0 ? 'exp' : ''">{{ money(balance(a), true) }}</div>
+      </button>
+      <div v-if="!bankAccounts.length" class="empty small">ยังไม่มีบัญชี</div>
+    </div>
+
+    <div v-if="walletTab==='debt'" style="margin-top:12px">
+      <div v-for="d in openDebts" :key="d.id" class="card" style="margin-bottom:12px">
+        <button class="row" style="width:100%;text-align:left" @click="editDebt(d)">
+          <div class="dot" style="background:#a0785a"><span class="ms">request_quote</span></div>
+          <div class="grow"><div class="ell">{{ d.name }}</div><div class="tiny muted ell">{{ d.lender || 'หนี้สิน' }}<span v-if="d.due_day"> · ทุกวันที่ {{ d.due_day }}</span></div></div>
+          <div style="text-align:right"><div class="b num exp">{{ money(debtLeft(d)) }}</div><div class="tiny muted">คงเหลือ</div></div>
+        </button>
+        <div class="bar2"><i :style="{width: debtPct(d)+'%', background:'var(--mint)'}"></i></div>
+        <div class="row between tiny muted" style="margin-top:6px"><span>จ่ายแล้ว {{ money(debtPaid(d)) }} ({{ Math.round(debtPct(d)) }}%)</span><span>จาก {{ money(d.principal) }}</span></div>
+        <button class="btn ghost block" style="margin-top:12px;height:40px" @click="payDebt(d)"><span class="ms" style="font-size:19px">payments</span> จ่ายงวดนี้{{ d.monthly ? ' ' + money(d.monthly) : '' }}</button>
+      </div>
+      <div v-if="!openDebts.length" class="card empty small">ไม่มีหนี้สิน<br>กด + มุมขวาบนเพื่อเพิ่ม เช่น ผ่อนรถ ผ่อนบ้าน สินเชื่อ<br>(ผ่อนสินค้าผ่านบัตรเครดิต ดูที่แถบบัตรเครดิต)</div>
+    </div>
+  </template>
+
+  <!-- ───────── credit cards ───────── -->
+  <template v-if="tab==='cards'">
+    <div class="top"><h1>บัตรเครดิต</h1><button class="iconbtn" @click="editAccount({kind:'credit'})" aria-label="เพิ่มบัตร"><span class="ms">add_card</span></button></div>
+    <div v-if="!cards.length" class="card empty small"><span class="ms">credit_card</span>ยังไม่มีบัตรเครดิต กดปุ่มมุมขวาบนเพื่อเพิ่ม</div>
+    <template v-else>
+      <div v-if="cards.length>1" class="opts" style="margin-bottom:12px">
+        <b-opt v-for="c in cards" :key="c.id" :on="card && card.id===c.id" icon="credit_card" :color="c.color" :sub="'ต้องจ่าย ' + money(cardCycle(c).due)" @pick="cardId=c.id">{{ c.name }}</b-opt>
+      </div>
+      <button class="cc" :style="{background:'linear-gradient(135deg,'+(card.color||'#f08a24')+','+shade(card.color||'#f08a24')+')'}" @click="editAccount(card)">
+        <div class="row between" style="position:relative"><span class="b">{{ card.name }}</span><span class="ms">contactless</span></div>
+        <div class="tiny" style="opacity:.85;margin-top:14px;position:relative">ยอดใช้ทั้งหมด (รวมยอดผ่อนที่เหลือ)</div>
+        <div class="num" style="font-size:24px;font-weight:500;position:relative">{{ money(cardUsed(card)) }}</div>
+        <div class="bar2" style="position:relative"><i :style="{width: Math.min(100, card.credit_limit ? cardUsed(card)/card.credit_limit*100 : 0)+'%'}"></i></div>
+        <div class="row between tiny" style="margin-top:8px;opacity:.92;position:relative">
+          <span>วงเงินเหลือ {{ money(Math.max(0,(card.credit_limit||0) - cardUsed(card))) }}</span>
+          <span>ตัดรอบทุกวันที่ {{ card.statement_day || '-' }}</span>
+        </div>
+      </button>
+
+      <div class="card" style="margin-top:12px">
+        <div class="row between">
+          <div><div class="small muted">ยอดต้องชำระรอบนี้</div><div class="num exp" style="font-size:24px;font-weight:500">{{ money(cyc.due) }}</div></div>
+          <div style="text-align:right"><div class="small muted">ครบกำหนด</div><div class="b">{{ cyc.dueText }}</div>
+            <span v-if="cyc.overdue" class="chip" style="background:color-mix(in srgb,var(--exp) 15%,transparent);color:var(--exp)">เลยกำหนด</span>
+            <span v-else-if="!cyc.due && cyc.bill" class="chip slip">จ่ายครบแล้ว</span></div>
+        </div>
+        <div style="margin-top:8px">
+          <div class="stat"><span class="muted">ยอดใช้ในรอบบิล ({{ cyc.range }})</span><span class="num">{{ money(cyc.spend) }}</span></div>
+          <div class="stat"><span class="muted">ค่างวด + สมาชิกรอบนี้ ({{ cyc.plansBilled }} รายการ)</span><span class="num">{{ money(cyc.inst) }}</span></div>
+          <div class="stat"><span class="muted">ชำระแล้วหลังตัดรอบ</span><span class="num inc">-{{ money(cyc.paid) }}</span></div>
+          <div class="stat"><span class="muted">ขั้นต่ำ 8%</span><span class="num">{{ money(cyc.min) }}</span></div>
+          <div class="stat"><span class="muted">ใช้ไปหลังตัดรอบ (ไปรอบหน้า)</span><span class="num">{{ money(cyc.unbilled) }}</span></div>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn ghost grow" @click="newCardTx('spend')"><span class="ms">shopping_cart</span> ใช้บัตร</button>
+          <button class="btn grow" @click="newCardTx('pay')"><span class="ms">payments</span> ชำระบัตร</button>
+        </div>
+      </div>
+
+      <h2>ผ่อนและสมาชิกรายเดือน <span class="muted small" style="font-weight:300">รวม {{ money(cardPlans.reduce((s,p)=>s+p.monthly,0)) }}/เดือน</span></h2>
+      <div class="card" style="padding:4px 14px">
+        <div v-if="!cardPlans.length" class="empty small">ไม่มีรายการผ่อนหรือสมาชิกในบัตรนี้</div>
+        <button v-for="pl in cardPlans" :key="pl.t.id" class="acc" style="display:block" @click="openTx(pl.t)">
+          <div class="row">
+            <div class="dot" :style="{background: txColor(pl.t)}"><span class="ms">{{ txIcon(pl.t) }}</span></div>
+            <div class="grow"><div class="ell">{{ pl.t.payee || txTitle(pl.t) }}</div>
+              <div class="tiny muted" v-if="pl.inst">งวด {{ pl.billed }}/{{ pl.months }} · เดือนละ {{ money(pl.monthly) }}{{ pl.rate ? ' · ดอกเบี้ย ' + pl.rate + '%/ด.' : ' · 0%' }}</div>
+              <div class="tiny muted" v-else>สมาชิกรายเดือน · {{ txTitle(pl.t) }}</div></div>
+            <div style="text-align:right" v-if="pl.inst"><div class="b num">{{ money(pl.left) }}</div><div class="tiny muted">เหลือ {{ pl.months - pl.billed }} งวด</div></div>
+            <div style="text-align:right" v-else><div class="b num">{{ money(pl.monthly) }}</div><div class="tiny muted">ต่อเดือน</div></div>
+          </div>
+          <div v-if="pl.inst" class="bar2"><i :style="{width: (pl.billed/pl.months*100)+'%', background: card.color}"></i></div>
+        </button>
+      </div>
+
+      <h2>รายการล่าสุดของบัตร</h2>
+      <div class="card" style="padding:4px 12px">
+        <div v-if="!cardRecent.length" class="empty small">ยังไม่มีรายการ</div>
+        <button v-for="t in cardRecent" :key="t.id" class="txrow" @click="openTx(t)">
+          <div class="dot" :style="{background: txColor(t)}"><span class="ms">{{ txIcon(t) }}</span></div>
+          <div class="grow">
+            <div class="ell">{{ t.kind==='transfer' ? 'ชำระบัตร' : (t.payee || txTitle(t)) }}</div>
+            <div class="row small muted" style="gap:6px;margin-top:2px"><span class="ell">{{ t.kind==='transfer' ? 'จาก ' + (accById[t.account_id]?.name || '?') : txTitle(t) }} · {{ shortDate(t.occurred_at) }}</span>
+              <span v-if="t.planKind==='install'" class="chip">ค่างวด</span><span v-if="t.planKind==='monthly'" class="chip">สมาชิก</span></div>
+          </div>
+          <div class="amt num" :class="t.kind==='transfer' ? 'inc' : 'exp'">{{ t.kind==='transfer' ? '+' : '-' }}{{ money(t.amount) }}</div>
+        </button>
+      </div>
+    </template>
+  </template>
+
+  <!-- ───────── settings ───────── -->
+  <template v-if="tab==='settings'">
+    <div class="top"><h1>ตั้งค่า</h1><span class="chip">{{ mode==='demo' ? 'โหมดตัวอย่าง (ข้อมูลสมมติ)' : userEmail }}</span></div>
+
+    <h2>บันทึกสลิปอัตโนมัติ</h2>
+    <div class="card">
+      <template v-if="mode==='cloud'">
+        <p class="small muted" style="margin:0 0 10px">ใส่ค่าทั้ง 3 นี้ใน Shortcut ของ iPhone ตามคู่มือ แล้วทุกครั้งที่ปิดแอปธนาคาร สลิปใหม่จะถูกบันทึกให้ทันที</p>
+        <div class="small b">1. ที่อยู่ (URL)</div>
+        <div class="code" @click="copy(ingestUrl)">{{ ingestUrl }}</div>
+        <div class="small b" style="margin-top:10px">2. apikey</div>
+        <div class="code" @click="copy(cfg.supabaseKey)">{{ cfg.supabaseKey }}</div>
+        <div class="small b" style="margin-top:10px">3. รหัสเชื่อมต่อ (p_token) <span class="muted" style="font-weight:300">ห้ามให้คนอื่น</span></div>
+        <div class="code" @click="copy(settings.token)">{{ showToken ? settings.token : '•••••••••••• แตะ "แสดง" เพื่อดู' }}</div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn ghost grow" style="height:40px" @click="showToken=!showToken">{{ showToken ? 'ซ่อน' : 'แสดง' }}</button>
+          <button class="btn ghost grow" style="height:40px" @click="copy(settings.token)">คัดลอกรหัส</button>
+          <button class="btn danger grow" style="height:40px" @click="newToken">สร้างใหม่</button>
+        </div>
+      </template>
+      <p v-else class="small muted" style="margin:0">ต้องเชื่อม Supabase ก่อน (ดูคู่มือ SETUP-TH.md) ระบบอ่านสลิปจึงจะทำงาน</p>
+      <label class="field"><span>ชื่อของคุณบนสลิป (คั่นด้วย ,) ใช้แยก "โอนเข้าบัญชีตัวเอง" ออกจากรายจ่าย</span>
+        <input class="input" v-model="myNamesText" placeholder="เช่น ธนธัช" @change="saveMyNames"></label>
+    </div>
+
+    <h2>ย้ายข้อมูลจาก Wallet Story</h2>
+    <div class="card">
+      <p class="small muted" style="margin:0 0 10px">ใน Wallet Story ส่งออกรายการเป็นไฟล์ CSV (transaction_all_….csv) แล้วเลือกไฟล์นั้นที่นี่ บัญชี บัตร และหมวดหมู่จะจับคู่ตามชื่อเดิม ที่ไม่มีจะสร้างให้ใหม่ นำเข้าซ้ำได้ ระบบจะข้ามรายการที่มีแล้ว
+        <span v-if="mode==='demo'"><br>โหมดตัวอย่าง: ข้อมูลจะเก็บในเบราว์เซอร์เครื่องนี้เท่านั้น ไม่ส่งไปที่ไหน</span></p>
+      <label class="btn ghost block" :style="importing ? 'opacity:.6' : ''"><span class="ms">upload_file</span> {{ importing ? 'กำลังนำเข้า…' : 'เลือกไฟล์ CSV' }}
+        <input type="file" accept=".csv,text/csv" style="display:none" @change="importWalletStory" :disabled="importing"></label>
+    </div>
+
+    <h2>ทดลองอ่านสลิป</h2>
+    <div class="card">
+      <p class="small muted" style="margin:0 0 8px">วางข้อความจากสลิป (เปิดรูปสลิปใน Photos → กดค้างที่ตัวหนังสือ → เลือกทั้งหมด → คัดลอก)</p>
+      <textarea class="input" v-model="testText" placeholder="โอนเงินสำเร็จ&#10;10 พ.ย. 69 13:45 น.&#10;..."></textarea>
+      <div class="row" style="margin-top:10px">
+        <button class="btn ghost grow" @click="testSlip(true)" :disabled="mode!=='cloud'">ลองอ่าน</button>
+        <button class="btn grow" @click="testSlip(false)" :disabled="mode!=='cloud'">บันทึกเลย</button>
+      </div>
+      <p v-if="testResult" class="small" style="margin:10px 2px 0">{{ testResult }}</p>
+    </div>
+
+    <h2>หมวดหมู่</h2>
+    <div class="card" style="padding:4px 14px">
+      <div class="seg" style="margin:10px 0 4px"><button :class="{on:catKind==='expense'}" @click="catKind='expense'">รายจ่าย</button><button :class="{on:catKind==='income'}" @click="catKind='income'">รายรับ</button></div>
+      <button v-for="c in categoriesOf(catKind)" :key="c.id" class="acc" @click="editCategory(c)">
+        <div class="dot" :style="{background:c.color, width:'34px', height:'34px'}"><span class="ms" style="font-size:18px">{{ c.icon }}</span></div>
+        <div class="grow"><div class="ell">{{ c.name }}</div><div class="tiny muted ell">{{ (c.keywords||[]).slice(0,6).join(', ') || 'ไม่มีคำค้น' }}</div></div>
+        <span class="ms muted">chevron_right</span>
+      </button>
+      <button class="acc" @click="editCategory(null)"><div class="dot" style="background:var(--soft);color:var(--muted);width:34px;height:34px"><span class="ms">add</span></div><span class="muted">เพิ่มหมวดหมู่</span></button>
+    </div>
+
+    <h2>อื่นๆ</h2>
+    <div class="card" style="padding:2px 14px">
+      <div class="setrow" style="display:block"><div class="row"><span class="ms">contrast</span><span class="grow">ธีม</span></div>
+        <div class="opts three" style="margin-top:10px"><b-opt v-for="o in themes" :key="o.v" :on="theme===o.v" @pick="setTheme(o.v)">{{ o.t }}</b-opt></div></div>
+      <button class="setrow" @click="exportCsv"><span class="ms">download</span><span class="grow">ส่งออกเป็น CSV (เปิดใน Excel)</span></button>
+      <button v-if="mode==='demo'" class="setrow" @click="resetDemo"><span class="ms">restart_alt</span><span class="grow">ล้างข้อมูล กลับไปใช้ข้อมูลตัวอย่าง</span></button>
+      <button class="setrow" @click="signOut"><span class="ms" style="color:var(--exp)">logout</span><span class="grow exp">{{ mode==='demo' ? 'ออกจากโหมดตัวอย่าง' : 'ออกจากระบบ' }}</span></button>
+    </div>
+  </template>
+</div>
+
+<nav class="bar"><div class="in">
+  <button :class="{on:tab==='home'}" @click="tab='home'"><span class="ms">home</span>หน้าแรก</button>
+  <button :class="{on:tab==='cards'}" @click="tab='cards'"><span class="ms">credit_card</span>บัตรเครดิต</button>
+  <button @click="tab==='cards' ? newCardTx('spend') : newTx()" aria-label="จดรายการ"><span class="plus"><span class="ms">add</span></span></button>
+  <button :class="{on:tab==='wallet'}" @click="tab='wallet'"><span class="ms">account_balance_wallet</span>กระเป๋า</button>
+  <button :class="{on:tab==='report'}" @click="tab='report'"><span class="ms">donut_large</span>สรุป</button>
+</div></nav>
+
+<!-- ───────── sheet: transaction ───────── -->
+<div v-if="sheet && sheet.type==='tx'" class="veil" @click.self="sheet=null">
+  <div class="sheet">
+    <div class="grab"></div>
+    <div class="seg">
+      <button v-for="k in ['expense','income','transfer','card']" :key="k" :class="{on:draft.kind===k}" @click="setKind(k)">{{ kindTx[k] }}</button>
+    </div>
+    <div v-if="draft.kind==='card'" class="opts" style="margin-top:10px">
+      <b-opt :on="draft.cardMode==='spend'" icon="shopping_cart" @pick="setCardMode('spend')">ใช้บัตร (ซื้อของ)</b-opt>
+      <b-opt :on="draft.cardMode==='pay'" icon="payments" @pick="setCardMode('pay')">ชำระบัตร</b-opt>
+    </div>
+    <div class="amountbox" style="margin-top:12px">
+      <div class="dot" :style="{background: draftColor}"><span class="ms">{{ draftIcon }}</span></div>
+      <div class="val num" :class="draftIsIncome ? 'inc' : draftIsMove ? '' : 'exp'">{{ expr || '0' }}</div>
+    </div>
+    <p v-if="expr && /[+\-−]/.test(expr.slice(1))" class="small muted" style="text-align:right;margin:4px 6px 0">= {{ money(evalExpr()) }}</p>
+
+    <div v-if="showCats" class="catgrid">
+      <button v-for="c in categoriesOf(draft.kind==='income' ? 'income' : 'expense')" :key="c.id" :class="{on:draft.category_id===c.id}" :style="{color:c.color}" @click="draft.category_id=c.id">
+        <div class="dot" :style="{background:c.color}"><span class="ms">{{ c.icon }}</span></div>
+        <span class="ell" style="max-width:64px;color:var(--ink)">{{ c.name }}</span>
+      </button>
+    </div>
+
+    <!-- expense / income -->
+    <div v-if="draft.kind==='expense' || draft.kind==='income'" class="field"><span>{{ draft.kind==='income' ? 'เข้าบัญชี' : 'จ่ายจากบัญชี' }}</span>
+      <div class="opts"><b-opt v-for="a in cashAccounts" :key="a.id" :on="draft.account_id===a.id" :icon="a.icon || 'account_balance'" :color="a.color" @pick="draft.account_id=a.id">{{ a.name }}</b-opt></div>
+    </div>
+
+    <!-- transfer between own accounts -->
+    <template v-if="draft.kind==='transfer'">
+      <div class="field"><span>โอนจาก</span>
+        <div class="opts"><b-opt v-for="a in cashAccounts" :key="a.id" :on="draft.account_id===a.id" :icon="a.icon || 'account_balance'" :color="a.color" :sub="money(balance(a), true)" @pick="pickFrom(a.id)">{{ a.name }}</b-opt></div>
+      </div>
+      <div class="swap"><button @click="swapAccounts" aria-label="สลับต้นทางปลายทาง"><span class="ms">swap_vert</span></button></div>
+      <div class="field" style="margin-top:0"><span>ไปบัญชี</span>
+        <div class="opts"><b-opt v-for="a in cashAccounts" :key="a.id" :on="draft.to_account_id===a.id" :disabled="a.id===draft.account_id" :icon="a.icon || 'account_balance'" :color="a.color" :sub="money(balance(a), true)" @pick="draft.to_account_id=a.id">{{ a.name }}</b-opt></div>
+      </div>
+    </template>
+
+    <!-- credit card -->
+    <template v-if="draft.kind==='card'">
+      <div class="field"><span>บัตร</span>
+        <div class="opts"><b-opt v-for="c in cards" :key="c.id" :on="draft.card_id===c.id" icon="credit_card" :color="c.color" :sub="'วงเงินเหลือ ' + money(Math.max(0,(c.credit_limit||0)-cardUsed(c)))" @pick="draft.card_id=c.id; if (draft.cardMode==='pay') payOption(draft.payOpt)">{{ c.name }}</b-opt></div>
+      </div>
+      <template v-if="draft.cardMode==='spend'">
+        <div class="field"><span>รูปแบบการจ่าย</span>
+          <div class="opts">
+            <b-opt :on="draft.planType==='full'" icon="bolt" sub="ซื้อครั้งเดียว" @pick="pickPlan('full')">จ่ายเต็ม</b-opt>
+            <b-opt :on="draft.planType==='install'" icon="calendar_month" sub="ลงค่างวดทุกรอบบิล" @pick="pickPlan('install')">ผ่อนชำระ</b-opt>
+            <b-opt :on="draft.planType==='monthly'" icon="autorenew" sub="Netflix, iCloud ฯลฯ" @pick="pickPlan('monthly')">รายเดือน (สมาชิก)</b-opt>
+          </div>
+        </div>
+        <p v-if="draft.planType==='monthly'" class="small muted" style="margin:10px 4px 0">ใส่ค่าสมาชิกต่อเดือน ระบบจะลงเป็นรายจ่ายให้เองทุกรอบบิลจนกว่าจะกดยกเลิก
+          <button v-if="draft.id && !draft.ended_at" class="chip warn" style="margin-left:4px" @click="endPlan">ยกเลิกสมาชิก</button>
+          <span v-if="draft.ended_at" class="chip">ยกเลิกแล้ว</span></p>
+        <template v-if="draft.planType==='install'">
+          <div class="field"><span>จำนวนงวด (เดือน)</span>
+            <div class="opts three"><b-opt v-for="m in [3,4,6,10,12,24]" :key="m" :on="draft.installment_months===m" @pick="draft.installment_months=m">{{ m }} เดือน</b-opt></div>
+          </div>
+          <div class="field"><span>ดอกเบี้ย</span>
+            <div class="opts three"><b-opt v-for="r in [0,0.69,0.89]" :key="r" :on="+draft.installment_rate===r" @pick="draft.installment_rate=r">{{ r ? r + '% / เดือน' : '0%' }}</b-opt></div>
+          </div>
+          <p class="small" style="margin:10px 4px 0">ผ่อนเดือนละ <b class="num">{{ money(planMonthly(evalExpr(), draft.installment_months, draft.installment_rate)) }}</b> × {{ draft.installment_months }} งวด
+            <span class="muted">รวม {{ money(planMonthly(evalExpr(), draft.installment_months, draft.installment_rate) * draft.installment_months) }}</span></p>
+        </template>
+      </template>
+      <template v-else>
+        <div class="field"><span>ชำระจากบัญชี</span>
+          <div class="opts"><b-opt v-for="a in cashAccounts" :key="a.id" :on="draft.account_id===a.id" :icon="a.icon || 'account_balance'" :color="a.color" :sub="money(balance(a), true)" @pick="draft.account_id=a.id">{{ a.name }}</b-opt></div>
+        </div>
+        <div class="field"><span>ยอดที่ชำระ</span>
+          <div class="opts">
+            <b-opt :on="draft.payOpt==='due'" :sub="money(draftCycle.due)" @pick="payOption('due')">เต็มยอดรอบนี้</b-opt>
+            <b-opt :on="draft.payOpt==='min'" :sub="money(draftCycle.min)" @pick="payOption('min')">ขั้นต่ำ 8%</b-opt>
+            <b-opt :on="draft.payOpt==='all'" :sub="money(draftCard ? cardUsed(draftCard) : 0)" @pick="payOption('all')">ปิดยอดทั้งหมด</b-opt>
+            <b-opt :on="draft.payOpt==='custom'" sub="ใช้แป้นตัวเลข" @pick="payOption('custom')">กรอกเอง</b-opt>
+          </div>
+        </div>
+      </template>
+    </template>
+
+    <div class="row" style="gap:8px">
+      <label class="field grow"><span>{{ draft.kind==='card' && draft.cardMode==='spend' ? 'ร้าน / สินค้า' : 'ร้าน / ผู้รับ / บันทึก' }}</span><input class="input" v-model="draft.payee" :placeholder="draft.kind==='card' ? 'เช่น iPhone, Shopee' : 'เช่น ข้าวมันไก่'"></label>
+      <label class="field" style="width:46%"><span>วันเวลา</span><input class="input" type="datetime-local" v-model="draft.when"></label>
+    </div>
+    <div v-if="draft.kind==='expense' && openDebts.length" class="field"><span>เป็นการจ่ายหนี้ไหม</span>
+      <div class="opts">
+        <b-opt :on="!draft.debt_id" @pick="draft.debt_id=null">ไม่ใช่</b-opt>
+        <b-opt v-for="d in openDebts" :key="d.id" :on="draft.debt_id===d.id" icon="request_quote" color="#a0785a" @pick="draft.debt_id=d.id">{{ d.name }}</b-opt>
+      </div>
+    </div>
+
+    <div class="keys">
+      <button v-for="k in ['7','8','9']" :key="k" @click="press(k)">{{ k }}</button><button class="op" @click="press('back')"><span class="ms">backspace</span></button>
+      <button v-for="k in ['4','5','6']" :key="k" @click="press(k)">{{ k }}</button><button class="op" @click="press('+')">+</button>
+      <button v-for="k in ['1','2','3']" :key="k" @click="press(k)">{{ k }}</button><button class="ok" @click="saveTx">บันทึก</button>
+      <button @click="press('.')">.</button><button @click="press('0')">0</button><button class="op" @click="press('−')">−</button>
+    </div>
+    <div v-if="draft.id" class="row" style="margin-top:12px">
+      <button class="btn danger grow" @click="deleteRow('cn_tx', draft.id)"><span class="ms" style="font-size:19px">delete</span> ลบรายการ</button>
+      <button v-if="draft.raw" class="btn ghost grow" @click="showRaw=!showRaw">ข้อความจากสลิป</button>
+    </div>
+    <pre v-if="showRaw && draft.raw" class="code" style="white-space:pre-wrap;margin-top:10px">{{ draft.raw }}</pre>
+  </div>
+</div>
+
+<!-- ───────── sheet: account / card ───────── -->
+<div v-if="sheet && sheet.type==='account'" class="veil" @click.self="sheet=null">
+  <div class="sheet">
+    <div class="grab"></div>
+    <div class="sheethead"><h1>{{ draft.id ? 'แก้ไข' : 'เพิ่ม' }}{{ draft.kind==='credit' ? 'บัตรเครดิต' : 'บัญชี' }}</h1><button class="iconbtn" @click="sheet=null"><span class="ms">close</span></button></div>
+    <div class="opts"><b-opt v-for="(t,k) in kindLabel" :key="k" :on="draft.kind===k" :icon="kindIcon[k]" @pick="draft.kind=k">{{ t }}</b-opt></div>
+    <label class="field"><span>ชื่อ</span><input class="input" v-model="draft.name" placeholder="เช่น ttb ค่าใช้จ่าย"></label>
+    <label class="field"><span>{{ draft.kind==='credit' ? 'ยอดค้างชำระตอนนี้ (ไม่รวมงวดผ่อนที่ยังไม่เรียกเก็บ)' : 'ยอดเงินคงเหลือตอนนี้ (ดูจากแอปธนาคาร)' }}</span><input class="input" type="number" inputmode="decimal" v-model.number="draft.openingInput"></label>
+    <template v-if="draft.kind==='credit'">
+      <label class="field"><span>วงเงิน</span><input class="input" type="number" inputmode="decimal" v-model.number="draft.credit_limit"></label>
+      <div class="row" style="gap:8px">
+        <label class="field grow"><span>วันตัดรอบ</span><input class="input" type="number" min="1" max="31" v-model.number="draft.statement_day"></label>
+        <label class="field grow"><span>วันครบกำหนดจ่าย</span><input class="input" type="number" min="1" max="31" v-model.number="draft.due_day"></label>
+      </div>
+    </template>
+    <label class="field"><span>คำที่ใช้จับคู่สลิป: เลข 4 ตัวท้ายบัญชี/บัตร และชื่อธนาคาร (คั่นด้วย ,)</span><input class="input" v-model="draft.matchText" placeholder="เช่น 1234, ttb, ทหารไทยธนชาต"></label>
+    <div class="field"><span>สี</span><div class="swatches"><button v-for="c in palette" :key="c" :style="{background:c}" :class="{on:draft.color===c}" @click="draft.color=c"></button></div></div>
+    <div class="field"><span>ไอคอน</span><div class="iconpick"><button v-for="i in accountIcons" :key="i" :class="{on:draft.icon===i}" @click="draft.icon=i"><span class="ms">{{ i }}</span></button></div></div>
+    <div class="row" style="margin-top:18px">
+      <button v-if="draft.id" class="btn danger" @click="archiveAccount"><span class="ms">archive</span></button>
+      <button class="btn grow" @click="saveAccount">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- ───────── sheet: debt ───────── -->
+<div v-if="sheet && sheet.type==='debt'" class="veil" @click.self="sheet=null">
+  <div class="sheet">
+    <div class="grab"></div>
+    <div class="sheethead"><h1>{{ draft.id ? 'แก้ไขหนี้สิน' : 'เพิ่มหนี้สิน' }}</h1><button class="iconbtn" @click="sheet=null"><span class="ms">close</span></button></div>
+    <label class="field"><span>ชื่อ</span><input class="input" v-model="draft.name" placeholder="เช่น ผ่อนรถ, ผ่อนมือถือ"></label>
+    <label class="field"><span>เจ้าหนี้</span><input class="input" v-model="draft.lender" placeholder="เช่น KTC, กรุงศรีออโต้, เพื่อน"></label>
+    <div class="row" style="gap:8px">
+      <label class="field grow"><span>ยอดหนี้ตอนนี้</span><input class="input" type="number" inputmode="decimal" v-model.number="draft.principal"></label>
+      <label class="field grow"><span>ผ่อนต่อเดือน</span><input class="input" type="number" inputmode="decimal" v-model.number="draft.monthly"></label>
+    </div>
+    <div class="row" style="gap:8px">
+      <label class="field grow"><span>ครบกำหนดทุกวันที่</span><input class="input" type="number" min="1" max="31" v-model.number="draft.due_day"></label>
+      <label class="field grow"><span>ดอกเบี้ย % ต่อปี</span><input class="input" type="number" inputmode="decimal" v-model.number="draft.interest"></label>
+    </div>
+    <label class="field"><span>บันทึก</span><input class="input" v-model="draft.note"></label>
+    <div class="row" style="margin-top:18px">
+      <button v-if="draft.id" class="btn danger" @click="closeDebt">ปิดหนี้</button>
+      <button class="btn grow" @click="saveDebt">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- ───────── sheet: category ───────── -->
+<div v-if="sheet && sheet.type==='category'" class="veil" @click.self="sheet=null">
+  <div class="sheet">
+    <div class="grab"></div>
+    <div class="sheethead"><h1>{{ draft.id ? 'แก้ไขหมวดหมู่' : 'เพิ่มหมวดหมู่' }}</h1><button class="iconbtn" @click="sheet=null"><span class="ms">close</span></button></div>
+    <div class="row"><div class="dot" :style="{background:draft.color}"><span class="ms">{{ draft.icon }}</span></div><input class="input grow" v-model="draft.name" placeholder="ชื่อหมวดหมู่"></div>
+    <div class="opts" style="margin-top:12px"><b-opt :on="draft.kind==='expense'" icon="north_east" @pick="draft.kind='expense'">รายจ่าย</b-opt><b-opt :on="draft.kind==='income'" icon="south_west" @pick="draft.kind='income'">รายรับ</b-opt></div>
+    <label class="field"><span>คำค้นสำหรับจัดหมวดอัตโนมัติ: ชื่อร้านหรือผู้รับ (คั่นด้วย ,)</span><textarea class="input" v-model="draft.keywordsText" placeholder="เช่น Starbucks, ร้านกาแฟ, Amazon"></textarea></label>
+    <div class="field"><span>สี</span><div class="swatches"><button v-for="c in palette" :key="c" :style="{background:c}" :class="{on:draft.color===c}" @click="draft.color=c"></button></div></div>
+    <div class="field"><span>ไอคอน</span><div class="iconpick"><button v-for="i in categoryIcons" :key="i" :class="{on:draft.icon===i}" @click="draft.icon=i"><span class="ms">{{ i }}</span></button></div></div>
+    <div class="row" style="margin-top:18px">
+      <button v-if="draft.id" class="btn danger" @click="archiveCategory"><span class="ms">delete</span></button>
+      <button class="btn grow" @click="saveCategory">บันทึก</button>
+    </div>
+  </div>
+</div>
+</template>
+
+<div v-if="asking" class="veil" style="align-items:center;z-index:70" @click.self="answer(false)">
+  <div class="card" style="max-width:340px;margin:16px;text-align:center">
+    <p style="margin:6px 0 16px;line-height:1.5">{{ asking.msg }}</p>
+    <div class="row"><button class="btn ghost grow" @click="answer(false)">ยกเลิก</button><button class="btn grow" @click="answer(true)">ตกลง</button></div>
+  </div>
+</div>
+<div v-if="toast" class="toast">{{ toast }}</div>
+</div>
+
+<script>
+const { createApp } = Vue;
+const cfg = window.COINOTE_CONFIG || {};
+const hasCloud = !!(cfg.supabaseUrl && cfg.supabaseKey && !/YOUR-PROJECT|YOUR_KEY/.test(cfg.supabaseUrl + cfg.supabaseKey) && window.supabase);
+const sb = hasCloud ? supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey) : null;
+const TABLES = ['cn_accounts', 'cn_categories', 'cn_debts', 'cn_tx', 'cn_rules'];
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'id-' + Math.random().toString(36).slice(2) + Date.now());
+const DEMO_KEY = 'coinote-demo-v2';
+const safe = { get(k){ try { return localStorage.getItem(k) } catch(e){ return null } }, set(k,v){ try { localStorage.setItem(k,v) } catch(e){} }, del(k){ try { localStorage.removeItem(k) } catch(e){} } };
+
+/* Starter data for the demo, the same as the database creates on first sign-in */
+/* Starter accounts and categories: the same names as in Wallet Story, so an imported history lines up */
+const START_ACCOUNTS = [
+  ['TTB (สำรอง)','bank','account_balance','#1f6fd1',['ttb','ทหารไทยธนชาต','ทีทีบี','TMB']],
+  ['TTB (เงินฝาก)','bank','savings','#3f8be0',[]],
+  ['K-Bank','bank','account_balance','#1fa463',['K PLUS','กสิกร','KBank','K+']],
+  ['CIMB(กู้บ้าน)','bank','home','#c8364e',['CIMB','ซีไอเอ็มบี']],
+  ['True Money','ewallet','wallet','#f2a41c',['TrueMoney','ทรูมันนี่','True Wallet']],
+  ['ShopeePay','ewallet','shopping_bag','#ee5a2c',['ShopeePay','ช้อปปี้เพย์']],
+  ['เป๋าตัง','ewallet','account_balance_wallet','#2a7de1',['เป๋าตัง','Paotang']],
+  ['Office Advance','bank','work','#5b7fd6',[]],
+  ['เงินสด','cash','local_atm','#6b8f71',[]],
+  ['TTB (So Smart)','credit','credit_card','#f08a24',['บัตรเครดิต ttb','So Smart'], { credit_limit:100000, statement_day:20, due_day:7 }],
+  ['Shopee (SPayLater)','credit','credit_card','#ee4d2d',['SPayLater','Shopee PayLater'], { credit_limit:20000, statement_day:25, due_day:10 }]];
+const START_CATEGORIES = [
+  ['อาหาร','expense','restaurant','#f28b66',['Amazon Cafe','Amazon','กาแฟ','Starbucks','ตลาด','Sushiro','KFC','ฮาจิบัง','สุกี้ตี๋น้อย','Dairy Queen','MK','LINE MAN','Grab Food','ร้านอาหาร','ก๋วยเตี๋ยว']],
+  ['ร้านสะดวกซื้อ','expense','storefront','#f5b14c',['7-Eleven','7-11','เซเว่น','CP ALL','FamilyMart','Lawson','ลอว์สัน']],
+  ['บุหรี่','expense','smoking_rooms','#8d8579',['บุหรี่']],
+  ['เดินทาง','expense','directions_car','#5aa9e6',['Grab','Bolt','Taxi','BTS','MRT','วิน','ปตท','PTT','Shell','บางจาก','ทางด่วน']],
+  ['บันเทิง','expense','sports_esports','#4fbfa8',['Netflix','YouTube','Disney','Prime Video','Nintendo','PlayStation','App Store','Bilibili','Pokemon','Steam']],
+  ['ซอฟแวร์','expense','apps','#6c9bd2',['iCloud','Canva','ChatGPT','OpenAI','Claude','Anthropic','Microsoft','MS365','LINE Premium','CapCut','Adobe']],
+  ['โทรศัพท์','expense','phone_iphone','#7a8cff',['iPhone','Apple Store','AIS','ทรูมูฟ']],
+  ['สาธารณูปโภค','expense','bolt','#8a7fd8',['การไฟฟ้า','PEA','MEA','การประปา','ประปา','Truemove','True Move','True Internet','TrueOnline','3BB']],
+  ['ที่พัก','expense','home','#a0785a',['ค่าบ้าน','รีโนเวต','ค่าเช่า','ค่าส่วนกลาง','HomePro','ไทวัสดุ','Global House']],
+  ['ครอบครัว','expense','family_restroom','#e86a92',[]],
+  ['ของใช้','expense','local_mall','#f0a35e',['Shopee','Lazada','Lotus','Big C','Makro','Watsons','Boots','Eveandboy','IKEA']],
+  ['เสื้อผ้า','expense','checkroom','#c77dba',['H&M','Uniqlo','Zara','Merrell']],
+  ['ค่ารักษา','expense','medication','#ef6f6c',['โรงพยาบาล','คลินิก','ร้านยา','pharmacy']],
+  ['Office','expense','work','#5b7fd6',[]],
+  ['Poker','expense','playing_cards','#3f9d6d',[]],
+  ['เที่ยว','expense','flight','#39b0c4',['Agoda','Booking','AirAsia','Traveloka']],
+  ['กีฬา','expense','sports_soccer','#4caf7a',['Decathlon']],
+  ['ทำบุญ','expense','volunteer_activism','#e0a43a',['วัด','มูลนิธิ','บริจาค']],
+  ['ประกันภัย','expense','health_and_safety','#5f8fa8',['ประกัน','AIA','FWD']],
+  ['ยานพาหนะ','expense','two_wheeler','#708090',[]],
+  ['บริการ','expense','room_service','#9aa5b1',[]],
+  ['สัตว์เลี้ยง','expense','pets','#b38b6d',[]],
+  ['โอนให้คน','expense','person','#9aa5b1',[]],
+  ['อื่นๆ','expense','category','#b8b0a2',[]],
+  ['รายได้','income','payments','#3aa76d',['เงินเดือน','salary','payroll']],
+  ['คืนเงิน','income','currency_exchange','#5aa9e6',[]],
+  ['Office','income','work','#5b7fd6',[]],
+  ['ได้พิเศษ','income','redeem','#8a7fd8',['เบี้ยเลี้ยง','โบนัส']],
+  ['เงินปันผล','income','trending_up','#f5b14c',['ปันผล','ดอกเบี้ย']],
+  ['Poker','income','playing_cards','#3f9d6d',[]],
+  ['ถอนเงิน','income','local_atm','#6b8f71',[]],
+  ['รับโอน','income','move_to_inbox','#5aa9e6',[]],
+  ['รายได้อื่น','income','redeem','#9aa5b1',[]]];
+
+function starterData(){
+  const accounts = START_ACCOUNTS.map(([name,kind,icon,color,match,extra],i)=>({ id: uid(), name, kind, icon, color, match, opening:0, sort:i+1, archived:false, ...(extra||{}) }));
+  const categories = START_CATEGORIES.map(([name,kind,icon,color,keywords],i)=>({ id: uid(), name, kind, icon, color, keywords, sort:i+1, archived:false }));
+  return { accounts, categories, debts:[], tx:[], rules:[], settings:{ my_names:[], token:'' } };
+}
+
+/* Example data for the preview (made-up amounts) */
+function demoData(){
+  const d = starterData(), now = new Date();
+  const open = { 'TTB (สำรอง)':21450, 'TTB (เงินฝาก)':60000, 'K-Bank':38000, 'CIMB(กู้บ้าน)':85000, 'True Money':260, 'ShopeePay':120, 'เป๋าตัง':400, 'Office Advance':5000, 'เงินสด':1200 };
+  d.accounts.forEach(a=>{ if (open[a.name] != null) a.opening = open[a.name] });
+  const cat = (n,k='expense') => d.categories.find(c=>c.name===n && c.kind===k).id, acc = n => d.accounts.find(a=>a.name===n).id;
+  const T = (daysAgo, h, amount, kind, c, a, payee, source='manual', extra={}) => {
+    const w = new Date(now); w.setDate(w.getDate()-daysAgo); w.setHours(h, (amount*7)%60|0, 0, 0);
+    d.tx.push({ id: uid(), occurred_at: w.toISOString(), amount, kind, category_id: c ? cat(c, kind==='income' ? 'income' : 'expense') : null, account_id: a ? acc(a) : null, to_account_id:null, debt_id:null, payee, source, ...extra });
+  };
+  T(0,8,65,'expense','ร้านสะดวกซื้อ','TTB (สำรอง)','7-Eleven','slip');
+  T(0,10,95,'expense','อาหาร','TTB (สำรอง)','Amazon Cafe','slip');
+  T(0,19,1250,'expense','ครอบครัว','TTB (สำรอง)','พ่อ','slip');
+  T(1,9,80,'expense','เดินทาง','True Money','Taxi','slip');
+  T(1,12,120,'expense','อาหาร','เงินสด','ตลาด');
+  T(1,20,72,'expense','บุหรี่','เงินสด','บุหรี่');
+  T(2,18,1820.5,'expense','สาธารณูปโภค','TTB (สำรอง)','การไฟฟ้า','slip');
+  T(2,21,399,'expense','ของใช้','ShopeePay','Shopee','slip');
+  T(3,10,85,'expense','อาหาร','TTB (สำรอง)','Amazon Cafe','slip');
+  T(3,13,640,'expense','อาหาร','TTB (สำรอง)','Sushiro','slip');
+  T(4,15,2400,'expense','Office','Office Advance','ค่าเอกสารงาน');
+  T(5,11,599,'expense','สาธารณูปโภค','TTB (สำรอง)','True Internet','slip');
+  T(6,12,1090,'expense','เสื้อผ้า','TTB (So Smart)','H&M');
+  T(8,9,15000,'transfer',null,'TTB (สำรอง)','เงินสำรอง','slip',{ to_account_id: acc('K-Bank') });
+  T(10,7,45000,'income','รายได้','TTB (สำรอง)','เงินเดือน ต.ค.','sms');
+  T(11,9,5000,'transfer',null,'TTB (สำรอง)','ค่าบ้าน','slip',{ to_account_id: acc('CIMB(กู้บ้าน)') });
+  T(4,8,9350,'transfer',null,'TTB (สำรอง)','ชำระบัตร','slip',{ to_account_id: acc('TTB (So Smart)') });
+  T(14,19,560,'expense','อาหาร','TTB (So Smart)','หมูกระทะ');
+  T(16,20,1290,'expense','ของใช้','Shopee (SPayLater)','Shopee');
+  T(20,12,300,'income','คืนเงิน','TTB (สำรอง)','เพื่อนคืนค่าข้าว','slip');
+  T(33,12,2300,'expense','อาหาร','TTB (สำรอง)','บุฟเฟต์');
+  T(40,7,45000,'income','รายได้','TTB (สำรอง)','เงินเดือน ก.ย.','sms');
+  // instalments and subscriptions on the card: saved once, charged every statement
+  T(190,14,42000,'expense','โทรศัพท์','TTB (So Smart)','iPhone (ตัวอย่าง)','manual',{ installment_months:10, installment_rate:0 });
+  T(60,15,24000,'expense','โทรศัพท์','TTB (So Smart)','iPad (ตัวอย่าง)','manual',{ installment_months:10, installment_rate:0 });
+  T(50,20,3600,'expense','ของใช้','Shopee (SPayLater)','หูฟัง','manual',{ installment_months:3, installment_rate:0 });
+  [['Netflix',349,'บันเทิง'],['YouTube Premium',179,'บันเทิง'],['iCloud',99,'ซอฟแวร์'],['ChatGPT',699,'ซอฟแวร์'],['Canva',230,'ซอฟแวร์'],['LINE Premium',169,'ซอฟแวร์']]
+    .forEach(([n,a,c],i)=>T(150+i,10,a,'expense',c,'TTB (So Smart)',n,'manual',{ recurring:true }));
+  d.debts = [{ id: uid(), name:'สินเชื่อบ้าน (ตัวอย่าง)', lender:'CIMB', principal:850000, monthly:7500, due_day:5, interest:3.2, closed:false }];
+  T(5,8,7500,'expense','ที่พัก','CIMB(กู้บ้าน)','ผ่อนบ้าน','slip',{ debt_id: d.debts[0].id });
+  T(36,8,7500,'expense','ที่พัก','CIMB(กู้บ้าน)','ผ่อนบ้าน','slip',{ debt_id: d.debts[0].id });
+  d.settings.my_names = ['สมมติ'];
+  return d;
+}
+
+/* Wallet Story export (transaction_all_*.csv) */
+function parseCsv(text){
+  const rows = []; let row = [], f = '', q = false;
+  text = text.replace(/^﻿/, '');
+  for (let i = 0; i < text.length; i++){
+    const c = text[i];
+    if (q){ if (c === '"'){ if (text[i+1] === '"'){ f += '"'; i++ } else q = false } else f += c }
+    else if (c === '"') q = true;
+    else if (c === ','){ row.push(f); f = '' }
+    else if (c === '\n' || c === '\r'){ if (c === '\r' && text[i+1] === '\n') i++; row.push(f); rows.push(row); row = []; f = '' }
+    else f += c;
+  }
+  if (f || row.length){ row.push(f); rows.push(row) }
+  const head = rows.shift() || [];
+  return rows.filter(r=>r.length > 2).map(r=>Object.fromEntries(head.map((h,i)=>[h.trim(), (r[i]||'').trim()])));
+}
+const norm = s => String(s||'').toLowerCase().replace(/[\s()\-_.]/g, '');
+const hash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) } return (h>>>0).toString(36) };
+
+createApp({
+  data(){ return {
+    cfg, hasCloud, ready:false, mode:null, userEmail:'', busy:false,
+    login:{ email:'', password:'', error:'' },
+    accounts:[], categories:[], debts:[], tx:[], rules:[], settings:{ token:'', my_names:[] },
+    tab:'home', walletTab:'acc', cardId:null, reportKind:'expense', catKind:'expense',
+    month: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    sheet:null, draft:{}, asking:null, importing:false, expr:'', showRaw:false, showToken:false, toast:'', toastTimer:null,
+    testText:'', testResult:'', myNamesText:'', theme: safe.get('coinote-theme') || 'auto',
+    themes:[{v:'auto',t:'อัตโนมัติ'},{v:'light',t:'สว่าง'},{v:'dark',t:'มืด'}],
+    kindLabel:{ bank:'บัญชีธนาคาร', ewallet:'e-Wallet', cash:'เงินสด', credit:'บัตรเครดิต' },
+    kindTx:{ expense:'รายจ่าย', income:'รายรับ', transfer:'โอน', card:'บัตรเครดิต' },
+    kindIcon:{ bank:'account_balance', ewallet:'wallet', cash:'local_atm', credit:'credit_card' },
+    palette:['#f28b66','#f5b14c','#e86a92','#5aa9e6','#8a7fd8','#4fbfa8','#ef6f6c','#a0785a','#9aa5b1','#3aa76d','#1f6fd1','#1fa463','#c8364e','#ee5a2c','#f2a41c','#6b8f71'],
+    categoryIcons:['restaurant','local_cafe','local_mall','shopping_bag','directions_car','local_gas_station','receipt_long','bolt','home','sports_esports','movie','favorite','medication','fitness_center','school','pets','child_care','flight','checkroom','spa','card_giftcard','volunteer_activism','request_quote','person','category','work','move_to_inbox','trending_up','redeem','savings','phone_iphone','wifi'],
+    accountIcons:['account_balance','payments','savings','home','wallet','shopping_bag','local_atm','credit_card','account_balance_wallet','currency_exchange','diamond','star'],
+  }},
+  computed:{
+    signedIn(){ return !!this.mode },
+    monthLabel(){ return this.month.toLocaleDateString('th-TH', { month:'long', year:'numeric' }) },
+    monthEnd(){ return new Date(this.month.getFullYear(), this.month.getMonth()+1, 1) },
+    catById(){ return Object.fromEntries(this.categories.map(c=>[c.id,c])) },
+    accById(){ return Object.fromEntries(this.accounts.map(a=>[a.id,a])) },
+    allTx(){ const now = new Date(), out = [];
+      for (const t of this.tx){ if (this.isPlan(t)) out.push(...this.planCharges(t, now)); else out.push(t) }
+      return out },
+    monthTx(){ const s=this.month.getTime(), e=this.monthEnd.getTime();
+      return this.allTx.filter(t=>{ const x=new Date(t.occurred_at).getTime(); return x>=s && x<e }).sort((a,b)=>b.occurred_at.localeCompare(a.occurred_at)) },
+    monthIncome(){ return this.sum(this.monthTx.filter(t=>t.kind==='income')) },
+    monthExpense(){ return this.sum(this.monthTx.filter(t=>t.kind==='expense')) },
+    monthDays(){
+      const groups = {};
+      for (const t of this.monthTx){
+        const d = new Date(t.occurred_at), key = d.toDateString();
+        (groups[key] ||= { key, d, items:[], inc:0, exp:0 }).items.push(t);
+        if (t.kind==='income') groups[key].inc += +t.amount; if (t.kind==='expense') groups[key].exp += +t.amount;
+      }
+      return Object.values(groups).sort((a,b)=>b.d-a.d).map(g=>({ ...g, dayNum:g.d.getDate(),
+        label: this.isToday(g.d) ? 'วันนี้' : g.d.toLocaleDateString('th-TH',{ weekday:'long', month:'short' }) }));
+    },
+    activeAccounts(){ return this.accounts.filter(a=>!a.archived).sort((a,b)=>(a.sort||0)-(b.sort||0)) },
+    bankAccounts(){ return this.activeAccounts.filter(a=>a.kind!=='credit') },
+    cashAccounts(){ return this.bankAccounts },
+    card(){ return this.cards.find(c=>c.id===this.cardId) || this.cards[0] || null },
+    cyc(){ return this.card ? this.cardCycle(this.card) : {} },
+    cardPlans(){ return this.card ? this.plansOf(this.card).filter(p=>p.inst ? p.billed < p.months : !p.ended) : [] },
+    cardRecent(){ const id = this.card?.id; return this.allTx.filter(t=>t.account_id===id || t.to_account_id===id).sort((a,b)=>b.occurred_at.localeCompare(a.occurred_at)).slice(0,15) },
+    draftCard(){ return this.accById[this.draft.card_id] || null },
+    draftCycle(){ return this.draftCard ? this.cardCycle(this.draftCard) : { due:0, min:0 } },
+    showCats(){ return this.draft.kind==='expense' || this.draft.kind==='income' || (this.draft.kind==='card' && this.draft.cardMode==='spend') },
+    draftIsIncome(){ return this.draft.kind==='income' },
+    draftIsMove(){ return this.draft.kind==='transfer' || (this.draft.kind==='card' && this.draft.cardMode==='pay') },
+    cards(){ return this.activeAccounts.filter(a=>a.kind==='credit') },
+    openDebts(){ return this.debts.filter(d=>!d.closed) },
+    assetsTotal(){ return this.bankAccounts.reduce((s,a)=>s+this.balance(a),0) },
+    cardDebtTotal(){ return this.cards.reduce((s,a)=>s+this.cardUsed(a),0) },
+    debtTotal(){ return this.openDebts.reduce((s,d)=>s+this.debtLeft(d),0) },
+    netWorth(){ return this.assetsTotal - this.cardDebtTotal - this.debtTotal },
+    dueSoon(){
+      const out = [], today = new Date(); today.setHours(0,0,0,0);
+      const add = (key,label,day) => { const n = this.nextDue(day); const days = Math.round((n-today)/864e5); if (days<=7) out.push({ key, label, when: days===0 ? 'วันนี้' : days===1 ? 'พรุ่งนี้' : 'อีก '+days+' วัน', days }); };
+      this.cards.forEach(a=>{ const c = this.cardCycle(a); if (a.due_day && c.due>0){ const days = Math.round((c.dueDate-today)/864e5); if (days<=7) out.push({ key:a.id, label:'จ่ายบัตร '+a.name+' '+this.money(c.due), when: days<0 ? 'เลยกำหนด' : days===0 ? 'วันนี้' : days===1 ? 'พรุ่งนี้' : 'อีก '+days+' วัน', days }) } });
+      this.openDebts.forEach(d=>{ if (d.due_day && !this.paidThisCycle(d)) add(d.id, 'ผ่อน '+d.name+(d.monthly?' '+this.money(d.monthly):''), d.due_day) });
+      return out.sort((a,b)=>a.days-b.days);
+    },
+    reportTx(){ return this.monthTx.filter(t=>t.kind===this.reportKind) },
+    reportTotal(){ return this.sum(this.reportTx) },
+    reportDelta(){
+      const s = new Date(this.month.getFullYear(), this.month.getMonth()-1, 1).getTime(), e = this.month.getTime();
+      return this.reportTotal - this.sum(this.allTx.filter(t=>{ const x=new Date(t.occurred_at).getTime(); return t.kind===this.reportKind && x>=s && x<e }));
+    },
+    byCategory(){
+      const m = {};
+      for (const t of this.reportTx){ const c = this.catById[t.category_id] || { id:'none', name:'ไม่มีหมวด', color:'#b8b0a2', icon:'help' };
+        (m[c.id] ||= { ...c, total:0 }).total += +t.amount; }
+      const tot = this.reportTotal || 1;
+      return Object.values(m).sort((a,b)=>b.total-a.total).map(c=>({ ...c, pct: c.total/tot*100 }));
+    },
+    donut(){ let off = 0; const C = 276.46;
+      return this.byCategory.map(c=>{ const len = c.pct/100*C; const s = { id:c.id, color:c.color, len: Math.max(0, len-1.2), off }; off += len; return s }) },
+    daysSoFar(){ const now = new Date(); const dim = new Date(this.month.getFullYear(), this.month.getMonth()+1, 0).getDate();
+      return (now >= this.month && now < this.monthEnd) ? now.getDate() : (now < this.month ? 1 : dim) },
+    dailyBars(){
+      const dim = new Date(this.month.getFullYear(), this.month.getMonth()+1, 0).getDate(), v = Array(dim).fill(0);
+      this.reportTx.forEach(t=>{ v[new Date(t.occurred_at).getDate()-1] += +t.amount });
+      const max = Math.max(...v, 1), now = new Date();
+      return v.map((x,i)=>({ d:i+1, h: x/max*100, today: this.isToday(new Date(this.month.getFullYear(), this.month.getMonth(), i+1)) }));
+    },
+    draftCat(){ return this.catById[this.draft.category_id] },
+    draftColor(){ return this.draftIsMove ? (this.draft.kind==='card' ? (this.draftCard?.color || '#f08a24') : '#9aa5b1') : (this.draftCat?.color || '#b8b0a2') },
+    draftIcon(){ return this.draft.kind==='transfer' ? 'swap_horiz' : this.draftIsMove ? 'credit_score' : (this.draftCat?.icon || 'category') },
+    ingestUrl(){ return (cfg.supabaseUrl||'').replace(/\/$/,'') + '/rest/v1/rpc/cn_ingest_slip' },
+  },
+  watch:{ theme:{ immediate:true, handler(v){ v==='auto' ? document.documentElement.removeAttribute('data-theme') : document.documentElement.setAttribute('data-theme', v) } } },
+  async mounted(){
+    if (sb){
+      const { data } = await sb.auth.getSession();
+      if (data.session){ await this.enterCloud(data.session) }
+      sb.auth.onAuthStateChange((ev, s)=>{ if (ev==='SIGNED_OUT'){ this.mode=null } });
+    }
+    if (!this.mode && (window.COINOTE_PREVIEW || safe.get('coinote-mode')==='demo')) this.startDemo();
+    this.ready = true;
+    if ('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+    document.addEventListener('visibilitychange', ()=>{ if (document.visibilityState==='visible' && this.mode==='cloud') this.loadCloud() });
+  },
+  methods:{
+    /* ── money & dates ── */
+    sum(list){ return list.reduce((s,t)=>s + +t.amount, 0) },
+    money(n, sign){ n = +n || 0; const neg = n<0; const s = Math.abs(n).toLocaleString('th-TH',{ minimumFractionDigits: Math.abs(n)%1 ? 2 : 0, maximumFractionDigits:2 });
+      return (neg ? '-' : '') + '฿' + s },
+    moneyShort(n){ return n>=1e6 ? '฿'+(n/1e6).toFixed(1)+'M' : n>=1e4 ? '฿'+(n/1e3).toFixed(1)+'k' : this.money(Math.round(n)) },
+    isToday(d){ return d.toDateString() === new Date().toDateString() },
+    shiftMonth(k){ this.month = new Date(this.month.getFullYear(), this.month.getMonth()+k, 1) },
+    nextDue(day){ const t = new Date(); t.setHours(0,0,0,0); let d = new Date(t.getFullYear(), t.getMonth(), Math.min(day, 28 + (day>28 ? 0 : 0)));
+      d = new Date(t.getFullYear(), t.getMonth(), Math.min(day, new Date(t.getFullYear(), t.getMonth()+1, 0).getDate()));
+      if (d < t) d = new Date(t.getFullYear(), t.getMonth()+1, Math.min(day, new Date(t.getFullYear(), t.getMonth()+2, 0).getDate()));
+      return d },
+    nextDate(day){ return this.nextDue(day).toLocaleDateString('th-TH',{ day:'numeric', month:'short' }) },
+    shade(hex){ const n = parseInt(hex.slice(1),16); const f = c => Math.max(0, Math.round(c*0.72));
+      return '#' + [f(n>>16), f((n>>8)&255), f(n&255)].map(x=>x.toString(16).padStart(2,'0')).join('') },
+    digitsOf(a){ return (a.match||[]).find(m=>/^\d{3,}$/.test(String(m).trim())) },
+    toLocalInput(iso){ const d = new Date(iso); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,16) },
+
+    /* ── balances ── */
+    balance(a){ let b = +a.opening || 0;
+      for (const t of this.allTx){
+        if (t.account_id===a.id){ if (t.kind==='income') b += +t.amount; else b -= +t.amount }
+        if (t.kind==='transfer' && t.to_account_id===a.id) b += +t.amount;
+      } return b },
+    /* card limit in use: what is owed now plus instalments not yet billed */
+    cardUsed(a){ return Math.max(0, -this.balance(a)) + this.plansOf(a).reduce((s,p)=>s+p.left,0) },
+    cutDate(day, y, m){ const dim = new Date(y, m+1, 0).getDate(); return new Date(y, m, Math.min(day||dim, dim), 23, 59, 59) },
+    lastCut(card){ const n = new Date(); let c = this.cutDate(card.statement_day, n.getFullYear(), n.getMonth()); if (c > n) c = this.cutDate(card.statement_day, n.getFullYear(), n.getMonth()-1); return c },
+    firstCut(card, when){ const d = new Date(when); let c = this.cutDate(card.statement_day, d.getFullYear(), d.getMonth()); if (c < d) c = this.cutDate(card.statement_day, d.getFullYear(), d.getMonth()+1); return c },
+    planMonthly(amount, months, rate){ if (!months) return 0; return Math.round((amount/months + amount*(+rate||0)/100)*100)/100 },
+    /* instalments and subscriptions on a card: saved once, charged once per statement */
+    isPlan(t){ return t.kind==='expense' && (t.installment_months>0 || t.recurring) && this.accById[t.account_id]?.kind==='credit' },
+    planCharges(t, upto){
+      const card = this.accById[t.account_id], out = [], first = this.firstCut(card, t.occurred_at);
+      const inst = t.installment_months>0, N = inst ? +t.installment_months : 600;
+      const monthly = inst ? this.planMonthly(+t.amount, N, t.installment_rate) : +t.amount, end = t.ended_at ? new Date(t.ended_at) : null;
+      for (let k = 0; k < N; k++){
+        const d = this.cutDate(card.statement_day, first.getFullYear(), first.getMonth()+k);
+        if (d > upto || (end && d > end)) break;
+        out.push({ ...t, id: t.id+'#'+(k+1), parent: t.id, virtual: true, occurred_at: d.toISOString(), amount: monthly,
+          payee: (t.payee || '') + (inst ? ' (' + (k+1) + '/' + N + ')' : ''), installment_months: null, recurring: false, planKind: inst ? 'install' : 'monthly' });
+      } return out },
+    plansOf(card){ const last = this.lastCut(card), prev = this.cutDate(card.statement_day, last.getFullYear(), last.getMonth()-1);
+      return this.tx.filter(t=>t.account_id===card.id && this.isPlan(t)).map(t=>{
+        const charges = this.planCharges(t, last), inst = t.installment_months>0, months = inst ? +t.installment_months : null;
+        const monthly = inst ? this.planMonthly(+t.amount, months, t.installment_rate) : +t.amount, billed = charges.length;
+        const lastCharge = charges[charges.length-1];
+        return { t, inst, months, monthly, rate:+t.installment_rate||0, billed, ended: !!t.ended_at,
+          left: inst ? Math.round(monthly*(months-billed)*100)/100 : 0, inThisBill: !!lastCharge && new Date(lastCharge.occurred_at) > prev };
+      }).sort((a,b)=>(a.inst===b.inst ? 0 : a.inst ? -1 : 1) || b.monthly-a.monthly) },
+    cardCycle(card){
+      const last = this.lastCut(card), prev = this.cutDate(card.statement_day, last.getFullYear(), last.getMonth()-1);
+      let spend = 0, inst = 0, paid = 0, unbilled = 0, plansBilled = 0;
+      for (const t of this.allTx){ const w = new Date(t.occurred_at);
+        if (t.account_id===card.id && t.kind==='expense'){
+          if (w>prev && w<=last){ if (t.virtual){ inst += +t.amount; plansBilled++ } else spend += +t.amount }
+          else if (w>last && !t.virtual) unbilled += +t.amount;
+        }
+        if (t.to_account_id===card.id && t.kind==='transfer' && w>last) paid += +t.amount;
+      }
+      const bill = spend + inst, due = Math.max(0, Math.round((bill - paid)*100)/100);
+      const f = d => d.toLocaleDateString('th-TH',{ day:'numeric', month:'short' });
+      const dim = (y,m) => new Date(y, m+1, 0).getDate();
+      let dd = new Date(last.getFullYear(), last.getMonth(), Math.min(card.due_day||1, dim(last.getFullYear(), last.getMonth())));
+      if (dd <= last) dd = new Date(last.getFullYear(), last.getMonth()+1, Math.min(card.due_day||1, dim(last.getFullYear(), last.getMonth()+1)));
+      const today = new Date(); today.setHours(0,0,0,0);
+      return { spend, inst, paid, unbilled, due, bill, plansBilled, dueDate: dd, overdue: due>0 && dd < today, dueText: card.due_day ? f(dd) : '-',
+        min: Math.min(due, Math.ceil(bill*0.08)), range: f(new Date(prev.getTime()+1000)) + ' – ' + f(last) };
+    },
+    shortDate(iso){ return new Date(iso).toLocaleDateString('th-TH',{ day:'numeric', month:'short' }) },
+    debtPaid(d){ return this.sum(this.tx.filter(t=>t.debt_id===d.id)) },
+    debtLeft(d){ return Math.max(0, (+d.principal||0) - this.debtPaid(d)) },
+    debtPct(d){ return d.principal ? Math.min(100, this.debtPaid(d)/d.principal*100) : 0 },
+    paidThisCycle(d){ const since = Date.now() - 25*864e5; return this.tx.some(t=>t.debt_id===d.id && new Date(t.occurred_at).getTime() > since) },
+    categoriesOf(kind){ return this.categories.filter(c=>c.kind===kind && !c.archived).sort((a,b)=>(a.sort||0)-(b.sort||0)) },
+    txTitle(t){ if (t.kind==='transfer'){ const a=this.accById[t.account_id], b=this.accById[t.to_account_id]; return (b && b.kind==='credit' ? 'จ่ายบัตร ' : 'โอน ') + (a?a.name:'?') + ' → ' + (b?b.name:'?') }
+      return this.catById[t.category_id]?.name || 'ไม่มีหมวด' },
+    txSub(t){ return [t.payee || t.note, t.kind!=='transfer' && this.accById[t.account_id]?.name, t.installment_months ? 'ผ่อน ' + t.installment_months + ' เดือน' : '', new Date(t.occurred_at).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})].filter(Boolean).join(' · ') },
+    txColor(t){ return t.kind==='transfer' ? '#9aa5b1' : (this.catById[t.category_id]?.color || '#b8b0a2') },
+    txIcon(t){ if (t.kind==='transfer') return this.accById[t.to_account_id]?.kind==='credit' ? 'credit_score' : 'swap_horiz'; return this.catById[t.category_id]?.icon || 'help' },
+
+    /* ── data: Supabase or this device ── */
+    async signIn(){
+      this.busy = true; this.login.error = '';
+      const { data, error } = await sb.auth.signInWithPassword({ email: this.login.email.trim(), password: this.login.password });
+      this.busy = false;
+      if (error){ this.login.error = 'เข้าไม่ได้: ' + (error.message.includes('Invalid') ? 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' : error.message); return }
+      await this.enterCloud(data.session);
+    },
+    async enterCloud(session){
+      this.mode = 'cloud'; this.userEmail = session.user.email; safe.del('coinote-mode');
+      await sb.rpc('cn_bootstrap');
+      await this.loadCloud();
+      sb.channel('coinote').on('postgres_changes', { event:'*', schema:'public' }, p => this.applyChange(p)).subscribe();
+    },
+    async loadAll(table){
+      const out = []; for (let from = 0; ; from += 1000){
+        const { data, error } = await sb.from(table).select('*').range(from, from+999);
+        if (error){ this.say('โหลดข้อมูลไม่ได้: ' + error.message); break }
+        out.push(...data); if (data.length < 1000) break;
+      } return out },
+    async loadCloud(){
+      const [accounts, categories, debts, tx, rules] = await Promise.all(TABLES.map(t=>this.loadAll(t)));
+      Object.assign(this, { accounts, categories, debts, tx, rules });
+      const { data } = await sb.from('cn_settings').select('*').maybeSingle();
+      if (data){ this.settings = data; this.myNamesText = (data.my_names||[]).join(', ') }
+    },
+    applyChange(p){
+      const key = { cn_accounts:'accounts', cn_categories:'categories', cn_debts:'debts', cn_tx:'tx' }[p.table]; if (!key) return;
+      const list = this[key].filter(r=>r.id !== (p.old?.id || p.new?.id));
+      if (p.eventType !== 'DELETE') list.push(p.new);
+      this[key] = list;
+      if (p.table==='cn_tx' && p.eventType==='INSERT' && p.new.source!=='manual') this.say('รับสลิปใหม่: ' + this.money(p.new.amount) + (p.new.payee ? ' · ' + p.new.payee : ''));
+    },
+    startDemo(){
+      let d = null; try { d = JSON.parse(safe.get(DEMO_KEY)) } catch(e){}
+      if (!d) d = demoData();
+      Object.assign(this, { accounts:d.accounts, categories:d.categories, debts:d.debts, tx:d.tx, rules:d.rules||[], settings:d.settings||{} });
+      this.myNamesText = (this.settings.my_names||[]).join(', ');
+      this.mode = 'demo'; safe.set('coinote-mode','demo'); this.persistDemo();
+    },
+    persistDemo(){ if (this.mode==='demo') safe.set(DEMO_KEY, JSON.stringify({ accounts:this.accounts, categories:this.categories, debts:this.debts, tx:this.tx, rules:this.rules, settings:this.settings })) },
+    async resetDemo(){ if (!(await this.ask('ล้างข้อมูลในเบราว์เซอร์นี้ แล้วกลับไปใช้ข้อมูลตัวอย่าง?'))) return; safe.del(DEMO_KEY); this.startDemo(); this.say('กลับไปใช้ข้อมูลตัวอย่างแล้ว') },
+    async upsert(table, row){
+      const key = { cn_accounts:'accounts', cn_categories:'categories', cn_debts:'debts', cn_tx:'tx' }[table];
+      if (this.mode==='cloud'){
+        const { data, error } = await sb.from(table).upsert(row).select().single();
+        if (error){ this.say('บันทึกไม่ได้: ' + error.message); return null }
+        row = data;
+      } else if (!row.id) row = { ...row, id: uid() };
+      this[key] = [...this[key].filter(r=>r.id!==row.id), row];
+      this.persistDemo(); return row;
+    },
+    async deleteRow(table, id){
+      if (!(await this.ask('ลบรายการนี้?'))) return;
+      if (this.mode==='cloud'){ const { error } = await sb.from(table).delete().eq('id', id); if (error){ this.say(error.message); return } }
+      this.tx = this.tx.filter(r=>r.id!==id); this.persistDemo(); this.sheet = null; this.say('ลบแล้ว');
+    },
+    async signOut(){ if (this.mode==='cloud') await sb.auth.signOut(); safe.del('coinote-mode'); this.mode = null; this.tab = 'home' },
+
+    /* ── add or edit a transaction ── */
+    newTx(preset={}){
+      const kind = preset.kind || 'expense';
+      const ck = kind==='income' ? 'income' : 'expense';
+      this.draft = { id:null, kind, cardMode:'spend', planType:'full', recurring:false, ended_at:null, card_id: this.card?.id || null, category_id: this.categoriesOf(ck)[0]?.id || null, account_id: this.cashAccounts[0]?.id || null,
+        to_account_id: kind==='transfer' ? (this.cashAccounts[1]?.id || null) : null, installment_months:null, installment_rate:0, payOpt:'due',
+        debt_id:null, payee:'', when: this.toLocalInput(new Date().toISOString()), ...preset };
+      this.expr = preset.amount ? String(preset.amount) : ''; this.showRaw = false; this.sheet = { type:'tx' };
+    },
+    newCardTx(mode){ this.newTx({ kind:'card', cardMode:mode, card_id: this.card?.id || this.cards[0]?.id || null }); if (mode==='pay') this.payOption('due') },
+    setCardMode(m){ this.draft.cardMode = m; if (m==='pay') this.payOption(this.draft.payOpt || 'due') },
+    payOption(o){ this.draft.payOpt = o; const c = this.draftCard; if (!c || o==='custom') return;
+      const v = o==='due' ? this.cardCycle(c).due : o==='min' ? this.cardCycle(c).min : this.cardUsed(c); this.expr = v ? String(Math.round(v*100)/100) : '' },
+    pickFrom(id){ this.draft.account_id = id; if (this.draft.to_account_id===id) this.draft.to_account_id = this.cashAccounts.find(a=>a.id!==id)?.id || null },
+    async endPlan(){ if (!(await this.ask('ยกเลิกสมาชิกนี้? รอบบิลถัดไปจะไม่ถูกลงค่าใช้จ่ายอีก'))) return;
+      const { originalCategory, cardMode, payOpt, planType, card_id, when, ...row } = this.draft;
+      await this.upsert('cn_tx', { ...row, ended_at: new Date().toISOString() }); this.sheet = null; this.say('ยกเลิกสมาชิกแล้ว') },
+    pickPlan(k){ this.draft.planType = k; if (k==='install' && !this.draft.installment_months) this.draft.installment_months = 10 },
+    swapAccounts(){ const a = this.draft.account_id; this.draft.account_id = this.draft.to_account_id; this.draft.to_account_id = a },
+    openTx(t){ if (t.virtual) t = this.tx.find(x=>x.id===t.parent) || t;
+      const acc = this.accById[t.account_id], to = this.accById[t.to_account_id];
+      this.draft = { ...t, planType: t.installment_months>0 ? 'install' : t.recurring ? 'monthly' : 'full', payee: t.payee || t.note || '', when: this.toLocalInput(t.occurred_at), originalCategory: t.category_id, cardMode:'spend', payOpt:'custom', installment_rate: t.installment_rate || 0 };
+      if (t.kind==='expense' && acc?.kind==='credit') Object.assign(this.draft, { kind:'card', cardMode:'spend', card_id: acc.id });
+      if (t.kind==='transfer' && to?.kind==='credit') Object.assign(this.draft, { kind:'card', cardMode:'pay', card_id: to.id });
+      this.expr = String(+t.amount); this.showRaw = false; this.sheet = { type:'tx' } },
+    setKind(k){ this.draft.kind = k; const ck = k==='income' ? 'income' : 'expense';
+      if (k!=='transfer' && this.draftCat?.kind !== ck) this.draft.category_id = this.categoriesOf(ck)[0]?.id || null;
+      if (k==='card' && !this.draft.card_id) this.draft.card_id = this.card?.id || this.cards[0]?.id || null;
+      if (k==='transfer' && (!this.draft.to_account_id || this.draft.to_account_id===this.draft.account_id)) this.draft.to_account_id = this.cashAccounts.find(a=>a.id!==this.draft.account_id)?.id || null;
+      if (k!=='card' && this.accById[this.draft.account_id]?.kind==='credit') this.draft.account_id = this.cashAccounts[0]?.id || null },
+    press(k){
+      let e = this.expr;
+      if (k==='back') e = e.slice(0,-1);
+      else if (k==='+' || k==='−'){ if (e && !/[+−]$/.test(e)) e += k }
+      else if (k==='.'){ const last = e.split(/[+−]/).pop(); if (!last.includes('.')) e += (last ? '' : '0') + '.' }
+      else { const last = e.split(/[+−]/).pop(); if (!(last.includes('.') && last.split('.')[1].length>=2) && e.length<14) e = (e==='0' ? '' : e) + k }
+      this.expr = e;
+    },
+    evalExpr(){ let total = 0, sign = 1;
+      for (const part of this.expr.split(/([+−])/)){ if (part==='+') sign = 1; else if (part==='−') sign = -1; else if (part) total += sign * parseFloat(part) }
+      return Math.round(total*100)/100 },
+    async saveTx(){
+      const amount = this.evalExpr(), d = this.draft;
+      if (!(amount>0)){ this.say('ใส่จำนวนเงินก่อน'); return }
+      if (d.kind==='transfer' && (!d.to_account_id || d.to_account_id===d.account_id)){ this.say('เลือกบัญชีปลายทาง'); return }
+      if (d.kind==='card' && !d.card_id){ this.say('เลือกบัตรก่อน'); return }
+      const spend = d.kind==='card' && d.cardMode==='spend', pay = d.kind==='card' && d.cardMode==='pay';
+      const kind = spend ? 'expense' : pay ? 'transfer' : d.kind;
+      const row = { amount, kind, category_id: kind==='transfer' ? null : d.category_id,
+        account_id: spend ? d.card_id : d.account_id,
+        to_account_id: pay ? d.card_id : (kind==='transfer' ? d.to_account_id : null),
+        debt_id: d.kind==='expense' ? (d.debt_id||null) : null,
+        installment_months: spend && d.planType==='install' ? d.installment_months : null,
+        installment_rate: spend && d.planType==='install' ? (+d.installment_rate||0) : null,
+        recurring: spend && d.planType==='monthly', ended_at: spend && d.planType==='monthly' ? (d.ended_at||null) : null,
+        payee: (d.payee||'').trim() || (pay ? 'ชำระบัตร' : null), occurred_at: new Date(d.when).toISOString() };
+      if (d.id) Object.assign(row, { id:d.id, source:d.source, ref:d.ref, raw:d.raw, note:d.note });
+      if (!d.id) row.source = 'manual';
+      const saved = await this.upsert('cn_tx', row); if (!saved) return;
+      // learn: a slip whose category you changed teaches the payee → category rule
+      if (d.id && d.source!=='manual' && row.payee && row.category_id && row.category_id !== d.originalCategory) await this.learnRule(row.payee, row.category_id);
+      this.sheet = null; this.say('บันทึกแล้ว');
+    },
+    async learnRule(payee, category_id){
+      const pattern = payee.replace(/สาขา.*$/,'').replace(/\s+\d+$/,'').replace(/\s+[ก-๙A-Za-z]\.?$/,'').trim();
+      if (pattern.length < 2) return;
+      if (this.mode==='cloud'){ const { error } = await sb.from('cn_rules').upsert({ pattern, category_id }); if (error) return }
+      this.rules = [...this.rules.filter(r=>r.pattern!==pattern), { pattern, category_id }]; this.persistDemo();
+      setTimeout(()=>this.say('จำแล้ว: ครั้งหน้า "' + pattern + '" จะเป็น ' + this.catById[category_id].name), 900);
+    },
+
+    /* ── wallet items ── */
+    newWalletItem(){ if (this.walletTab==='debt') this.editDebt(null); else this.editAccount(null) },
+    editAccount(a){
+      const base = a && a.id ? { ...a } : { name:'', kind:(a&&a.kind)||'bank', opening:0, color:'#5aa9e6', icon:(a&&a.kind)==='credit' ? 'credit_card' : 'account_balance', match:[] };
+      const now = base.id ? this.balance(base) : (+base.opening||0);
+      base.openingInput = Math.round((base.kind==='credit' ? -now : now)*100)/100;
+      base.matchText = (base.match||[]).join(', ');
+      this.draft = base; this.sheet = { type:'account' };
+    },
+    async saveAccount(){
+      const d = this.draft; if (!d.name.trim()){ this.say('ตั้งชื่อก่อน'); return }
+      const row = { name:d.name.trim(), kind:d.kind, color:d.color, icon:d.icon,
+        opening: (d.kind==='credit' ? -(+d.openingInput||0) : (+d.openingInput||0)) - (d.id ? this.balance(d) - (+d.opening||0) : 0),
+        credit_limit: d.kind==='credit' ? (+d.credit_limit||null) : null, statement_day: d.kind==='credit' ? (d.statement_day||null) : null, due_day: d.kind==='credit' ? (d.due_day||null) : null,
+        match: d.matchText.split(',').map(s=>s.trim()).filter(Boolean), sort: d.sort ?? this.accounts.length+1, archived:false };
+      if (d.id) row.id = d.id;
+      const saved = await this.upsert('cn_accounts', row);
+      if (saved){ this.sheet = null; this.say('บันทึกแล้ว'); if (saved.kind==='credit'){ this.cardId = saved.id; this.tab = 'cards' } }
+    },
+    async archiveAccount(){ if (!(await this.ask('ซ่อนบัญชีนี้? รายการเก่ายังอยู่ครบ'))) return;
+      const { openingInput, matchText, ...row } = this.draft; await this.upsert('cn_accounts', { ...row, archived:true }); this.sheet = null },
+    editDebt(d){ this.draft = d ? { ...d } : { name:'', lender:'', principal:null, monthly:null, due_day:null, interest:null, note:'', closed:false }; this.sheet = { type:'debt' } },
+    async saveDebt(){ const d = this.draft; if (!d.name.trim()){ this.say('ตั้งชื่อก่อน'); return }
+      const row = { name:d.name.trim(), lender:d.lender||null, principal:+d.principal||0, monthly:+d.monthly||null, due_day:d.due_day||null, interest:d.interest??null, note:d.note||null, closed:false };
+      if (d.id) row.id = d.id; if (await this.upsert('cn_debts', row)){ this.sheet = null; this.say('บันทึกแล้ว') } },
+    async closeDebt(){ if (!(await this.ask('ปิดหนี้นี้ (จ่ายครบแล้ว)?'))) return; await this.upsert('cn_debts', { ...this.draft, closed:true }); this.sheet = null; this.say('ยินดีด้วย ปิดหนี้แล้ว') },
+    payDebt(d){ const c = this.categories.find(c=>c.name==='ผ่อนหนี้' && c.kind==='expense');
+      this.newTx({ kind:'expense', category_id: c?.id || null, debt_id: d.id, payee: d.lender || d.name, amount: d.monthly || '' }) },
+    editCategory(c){ this.draft = c ? { ...c, keywordsText:(c.keywords||[]).join(', ') } : { name:'', kind:this.catKind, icon:'category', color:'#f28b66', keywordsText:'' }; this.sheet = { type:'category' } },
+    async saveCategory(){ const d = this.draft; if (!d.name.trim()){ this.say('ตั้งชื่อก่อน'); return }
+      const row = { name:d.name.trim(), kind:d.kind, icon:d.icon, color:d.color, keywords:d.keywordsText.split(',').map(s=>s.trim()).filter(Boolean), sort: d.sort ?? this.categories.length+1, archived:false };
+      if (d.id) row.id = d.id; if (await this.upsert('cn_categories', row)){ this.sheet = null; this.say('บันทึกแล้ว') } },
+    async archiveCategory(){ if (!(await this.ask('ลบหมวดหมู่นี้? รายการเก่ายังอยู่'))) return; const { keywordsText, ...row } = this.draft; await this.upsert('cn_categories', { ...row, archived:true }); this.sheet = null },
+
+    /* ── settings ── */
+    async saveMyNames(){ const names = this.myNamesText.split(',').map(s=>s.trim()).filter(Boolean);
+      if (this.mode==='cloud'){ const { error } = await sb.from('cn_settings').update({ my_names:names }).eq('user_id', this.settings.user_id); if (error){ this.say(error.message); return } }
+      this.settings = { ...this.settings, my_names:names }; this.persistDemo(); this.say('บันทึกชื่อแล้ว') },
+    async newToken(){ if (!(await this.ask('สร้างรหัสใหม่? Shortcut เดิมจะใช้ไม่ได้จนกว่าจะใส่รหัสใหม่'))) return;
+      const { data, error } = await sb.rpc('cn_new_token'); if (error){ this.say(error.message); return }
+      this.settings = { ...this.settings, token: data }; this.showToken = true; this.say('สร้างรหัสใหม่แล้ว อย่าลืมแก้ใน Shortcut') },
+    async testSlip(dry){ if (!this.testText.trim()) return;
+      const { data, error } = await sb.rpc('cn_ingest_slip', { p_token:this.settings.token, p_text:this.testText, p_dry:dry });
+      this.testResult = error ? 'ผิดพลาด: ' + error.message : data.message; if (!dry && data?.ok && !data.duplicate) await this.loadCloud() },
+    setTheme(v){ this.theme = v; safe.set('coinote-theme', v) },
+    copy(text){ if (!text) return; navigator.clipboard?.writeText(text).then(()=>this.say('คัดลอกแล้ว'), ()=>this.say('คัดลอกไม่ได้ กดค้างที่ข้อความแทน')) },
+    async importWalletStory(ev){
+      const file = ev.target.files[0]; ev.target.value = ''; if (!file) return;
+      let rows; try { rows = parseCsv(await file.text()) } catch(e){ rows = [] }
+      if (!rows.length || !('CATEGORY' in rows[0]) || !('AMOUNT' in rows[0])){ this.say('ไฟล์นี้ไม่ใช่ CSV ที่ส่งออกจาก Wallet Story'); return }
+      if (this.mode==='demo' && !this.settings.imported){
+        if (!(await this.ask('พบ ' + rows.length + ' รายการ ล้างข้อมูลตัวอย่างแล้วใส่ข้อมูลจากไฟล์แทน? ข้อมูลจะอยู่ในเบราว์เซอร์เครื่องนี้เท่านั้น'))) return;
+        const st = starterData(); Object.assign(this, { accounts:st.accounts, categories:st.categories, debts:[], tx:[], rules:[], settings:{ ...st.settings, imported:true } });
+      } else if (!(await this.ask('นำเข้า ' + rows.length + ' รายการจาก Wallet Story?'))) return;
+      this.importing = true;
+      try {
+        const accBy = new Map(this.accounts.map(a=>[norm(a.name), a])), catBy = new Map(this.categories.map(c=>[c.kind + ':' + norm(c.name), c]));
+        const getAcc = async (name, credit) => { if (!name) return null; let a = accBy.get(norm(name));
+          if (!a){ a = await this.upsert('cn_accounts', { name, kind: credit ? 'credit' : /money|wallet|เป๋า|pay/i.test(name) ? 'ewallet' : 'bank', icon: credit ? 'credit_card' : 'account_balance', color:'#9aa5b1', match:[], opening:0, sort:this.accounts.length+1, archived:false }); accBy.set(norm(name), a) }
+          return a };
+        const getCat = async (name, kind) => { let c = catBy.get(kind + ':' + norm(name));
+          if (!c){ c = await this.upsert('cn_categories', { name, kind, icon:'category', color:'#b8b0a2', keywords:[], sort:this.categories.length+1, archived:false }); catBy.set(kind + ':' + norm(name), c) }
+          return c };
+        const have = new Set(this.tx.map(t=>t.ref).filter(Boolean)), out = []; let skipped = 0;
+        for (const r of rows){
+          const amt = parseFloat(r['AMOUNT (THB)'] || r.AMOUNT); if (!amt || !r.DATE) continue;
+          const ref = 'ws:' + r.DATE.replace(/\D/g,'') + ':' + hash(Object.values(r).join('|'));
+          if (have.has(ref)){ skipped++; continue } have.add(ref);
+          const kind = amt < 0 ? 'expense' : 'income';
+          if (r.CREDIT_CARD) await getAcc(r.CREDIT_CARD, true);
+          const a = await getAcc(r.BANK_ACCOUNT || r.CREDIT_CARD, !r.BANK_ACCOUNT), c = await getCat(r.CATEGORY || 'อื่นๆ', kind);
+          const inParens = (r.NOTE.match(/^\((.*?)\)/) || [])[1];
+          out.push({ id: uid(), occurred_at: new Date(r.DATE.replace(' ', 'T') + '+07:00').toISOString(), amount: Math.abs(amt), kind,
+            category_id: c?.id || null, account_id: a?.id || null, to_account_id:null, debt_id:null,
+            payee: r.DEBT || r.SUB_CATEGORY || inParens || r.NOTE || null,
+            note: [r.NOTE, r.CREDIT_CARD && ('บัตร ' + r.CREDIT_CARD)].filter(Boolean).join(' · ') || null, source:'import', ref });
+        }
+        if (this.mode==='cloud'){
+          for (let i = 0; i < out.length; i += 500){
+            const { data, error } = await sb.from('cn_tx').insert(out.slice(i, i+500).map(({ id, ...x })=>x)).select();
+            if (error) throw error; this.tx = this.tx.concat(data);
+          }
+        } else { this.tx = this.tx.concat(out); this.persistDemo() }
+        const last = out.map(t=>t.occurred_at).sort().pop();
+        if (last){ const d = new Date(last); this.month = new Date(d.getFullYear(), d.getMonth(), 1) }
+        this.tab = 'home'; this.say('นำเข้าแล้ว ' + out.length + ' รายการ' + (skipped ? ' (ข้ามที่ซ้ำ ' + skipped + ')' : ''));
+      } catch(e){ this.say('นำเข้าไม่สำเร็จ: ' + (e.message || e)) }
+      finally { this.importing = false }
+    },
+    ask(msg){ return new Promise(res=>{ this.asking = { msg, res } }) },
+    answer(v){ const a = this.asking; this.asking = null; a && a.res(v) },
+    say(msg){ this.toast = msg; clearTimeout(this.toastTimer); this.toastTimer = setTimeout(()=>this.toast='', 2600) },
+    exportCsv(){
+      const q = v => '"' + String(v ?? '').replace(/"/g,'""') + '"';
+      const rows = [['วันที่','ประเภท','หมวดหมู่','บัญชี','ไปบัญชี','จำนวน','ร้าน/ผู้รับ','ที่มา']]
+        .concat([...this.tx].sort((a,b)=>a.occurred_at.localeCompare(b.occurred_at)).map(t=>[new Date(t.occurred_at).toLocaleString('th-TH'), this.kindTx[t.kind], this.catById[t.category_id]?.name,
+          this.accById[t.account_id]?.name, this.accById[t.to_account_id]?.name, t.amount, t.payee, t.source]));
+      const blob = new Blob(['﻿' + rows.map(r=>r.map(q).join(',')).join('\n')], { type:'text/csv' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'coinote.csv'; a.click();
+    },
+  }
+}).component('b-opt', {
+  props:{ on:Boolean, icon:String, color:String, sub:String, disabled:Boolean },
+  emits:['pick'],
+  template:`<button type="button" class="opt" :class="{on}" :disabled="disabled" :aria-pressed="on" @click="$emit('pick')">
+    <span class="bul"></span><span v-if="icon" class="ms" :style="{color: color || 'var(--muted)'}">{{ icon }}</span>
+    <span class="grow" style="min-width:0"><span class="ell" style="display:block"><slot></slot></span><span v-if="sub" class="sub num">{{ sub }}</span></span></button>`
+}).mount('#app');
+</script>
+</body>
+</html>
