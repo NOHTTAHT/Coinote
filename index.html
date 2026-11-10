@@ -315,7 +315,7 @@ nav.bar .plus .ms{font-size:30px}
     <div v-if="walletTab==='acc'" class="card" style="margin-top:12px;padding:4px 14px">
       <button v-for="a in bankAccounts" :key="a.id" class="acc" @click="editAccount(a)">
         <div class="dot" :style="{background:a.color||'#999'}"><span class="ms">{{ a.icon || 'account_balance' }}</span></div>
-        <div class="grow"><div class="ell">{{ a.name }}</div><div class="tiny muted ell">{{ kindLabel[a.kind] }}<span v-if="digitsOf(a)"> · ลงท้าย {{ digitsOf(a) }}</span></div></div>
+        <div class="grow"><div class="ell">{{ a.name }}</div><div class="tiny muted ell">{{ kindLabel[a.kind] }}<span v-if="acctNo(a)"> · {{ maskNo(acctNo(a)) }}</span><span v-else-if="digitsOf(a)"> · ลงท้าย {{ digitsOf(a) }}</span></div></div>
         <div class="b num" :class="balance(a)<0 ? 'exp' : ''">{{ money(balance(a), true) }}</div>
       </button>
       <div v-if="!bankAccounts.length" class="empty small">ยังไม่มีบัญชี</div>
@@ -603,7 +603,10 @@ nav.bar .plus .ms{font-size:30px}
         <label class="field grow"><span>วันครบกำหนดจ่าย</span><input class="input" type="number" min="1" max="31" v-model.number="draft.due_day"></label>
       </div>
     </template>
-    <label class="field"><span>คำที่ใช้จับคู่สลิป: เลข 4 ตัวท้ายบัญชี/บัตร และชื่อธนาคาร (คั่นด้วย ,)</span><input class="input" v-model="draft.matchText" placeholder="เช่น 1234, ttb, ทหารไทยธนชาต"></label>
+    <label class="field"><span>{{ draft.kind==='credit' ? 'เลขบัตร (ใส่ทั้งหมดหรือแค่ 4 ตัวท้ายก็ได้)' : draft.kind==='bank' ? 'เลขบัญชี' : 'เลขบัญชี / เบอร์ที่ผูก (ไม่บังคับ)' }}</span>
+      <input class="input num" v-model="draft.acctNoInput" inputmode="numeric" placeholder="เช่น 123-4-56789-0">
+      <span v-if="draft.acctNoInput && lastDigits(draft.acctNoInput)" class="tiny muted" style="margin:5px 4px 0">ระบบจะดูเลขท้าย <b>{{ lastDigits(draft.acctNoInput) }}</b> ในสลิป เพื่อรู้ว่าเงินออกจากหรือเข้าบัญชีนี้</span></label>
+    <label class="field"><span>คำที่ใช้จับคู่สลิปเพิ่มเติม: ชื่อธนาคารหรือชื่อแอป (คั่นด้วย ,)</span><input class="input" v-model="draft.matchText" placeholder="เช่น 1234, ttb, ทหารไทยธนชาต"></label>
     <div class="field"><span>สี</span><div class="swatches"><button v-for="c in palette" :key="c" :style="{background:c}" :class="{on:draft.color===c}" @click="draft.color=c"></button></div></div>
     <div class="field"><span>ไอคอน</span><div class="iconpick"><button v-for="i in accountIcons" :key="i" :class="{on:draft.icon===i}" @click="draft.icon=i"><span class="ms">{{ i }}</span></button></div></div>
     <div class="row" style="margin-top:18px">
@@ -665,7 +668,8 @@ nav.bar .plus .ms{font-size:30px}
 
 <script>
 const { createApp } = Vue;
-const cfg = window.COINOTE_CONFIG || {};
+const cfg = { ...(window.COINOTE_CONFIG || {}) };
+if (cfg.supabaseUrl) cfg.supabaseUrl = cfg.supabaseUrl.trim().replace(/\/(rest|auth)\/v1\/?$/,'').replace(/\/+$/,'');  // accept a URL copied with /rest/v1/
 const hasCloud = !!(cfg.supabaseUrl && cfg.supabaseKey && !/YOUR-PROJECT|YOUR_KEY/.test(cfg.supabaseUrl + cfg.supabaseKey) && window.supabase);
 const sb = hasCloud ? supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey) : null;
 const TABLES = ['cn_accounts', 'cn_categories', 'cn_debts', 'cn_tx', 'cn_rules'];
@@ -913,6 +917,12 @@ createApp({
     shade(hex){ const n = parseInt(hex.slice(1),16); const f = c => Math.max(0, Math.round(c*0.72));
       return '#' + [f(n>>16), f((n>>8)&255), f(n&255)].map(x=>x.toString(16).padStart(2,'0')).join('') },
     digitsOf(a){ return (a.match||[]).find(m=>/^\d{3,}$/.test(String(m).trim())) },
+    /* the full account number is kept in the match list as "no:<digits>"; its last 4 digits are what slips show */
+    acctNo(a){ const m = (a.match||[]).find(x=>String(x).startsWith('no:')); return m ? m.slice(3) : '' },
+    /* Thai slips hide most of the number: "xxx-x-x5678-x" shows digits 6–9, some banks show the last 4 */
+    slipDigits(no){ const d = String(no||'').replace(/\D/g,''); if (d.length < 4) return []; return [...new Set(d.length >= 10 ? [d.slice(-5,-1), d.slice(-4)] : [d.slice(-4)])] },
+    lastDigits(no){ return this.slipDigits(no).join(' หรือ ') },
+    maskNo(no){ const d = String(no).replace(/\D/g,''); return d.length >= 10 && d.length <= 12 ? 'xxx-x-x' + d.slice(-5,-1) + '-' + d.slice(-1) : '•••• ' + d.slice(-4) },
     toLocalInput(iso){ const d = new Date(iso); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,16) },
 
     /* ── balances ── */
@@ -1114,7 +1124,9 @@ createApp({
       const base = a && a.id ? { ...a } : { name:'', kind:(a&&a.kind)||'bank', opening:0, color:'#5aa9e6', icon:(a&&a.kind)==='credit' ? 'credit_card' : 'account_balance', match:[] };
       const now = base.id ? this.balance(base) : (+base.opening||0);
       base.openingInput = Math.round((base.kind==='credit' ? -now : now)*100)/100;
-      base.matchText = (base.match||[]).join(', ');
+      base.acctNoInput = this.acctNo(base);
+      const auto = this.slipDigits(base.acctNoInput);
+      base.matchText = (base.match||[]).filter(m=>!String(m).startsWith('no:') && !auto.includes(m)).join(', ');
       this.draft = base; this.sheet = { type:'account' };
     },
     async saveAccount(){
@@ -1122,13 +1134,15 @@ createApp({
       const row = { name:d.name.trim(), kind:d.kind, color:d.color, icon:d.icon,
         opening: (d.kind==='credit' ? -(+d.openingInput||0) : (+d.openingInput||0)) - (d.id ? this.balance(d) - (+d.opening||0) : 0),
         credit_limit: d.kind==='credit' ? (+d.credit_limit||null) : null, statement_day: d.kind==='credit' ? (d.statement_day||null) : null, due_day: d.kind==='credit' ? (d.due_day||null) : null,
-        match: d.matchText.split(',').map(s=>s.trim()).filter(Boolean), sort: d.sort ?? this.accounts.length+1, archived:false };
+        match: (()=>{ const no = String(d.acctNoInput||'').replace(/\D/g,''), auto = this.slipDigits(no);
+          const terms = d.matchText.split(',').map(s=>s.trim()).filter(t=>t && !auto.includes(t));
+          return [...(no ? ['no:' + no] : []), ...auto, ...terms] })(), sort: d.sort ?? this.accounts.length+1, archived:false };
       if (d.id) row.id = d.id;
       const saved = await this.upsert('cn_accounts', row);
       if (saved){ this.sheet = null; this.say('บันทึกแล้ว'); if (saved.kind==='credit'){ this.cardId = saved.id; this.tab = 'cards' } }
     },
     async archiveAccount(){ if (!(await this.ask('ซ่อนบัญชีนี้? รายการเก่ายังอยู่ครบ'))) return;
-      const { openingInput, matchText, ...row } = this.draft; await this.upsert('cn_accounts', { ...row, archived:true }); this.sheet = null },
+      const { openingInput, matchText, acctNoInput, ...row } = this.draft; await this.upsert('cn_accounts', { ...row, archived:true }); this.sheet = null },
     editDebt(d){ this.draft = d ? { ...d } : { name:'', lender:'', principal:null, monthly:null, due_day:null, interest:null, note:'', closed:false }; this.sheet = { type:'debt' } },
     async saveDebt(){ const d = this.draft; if (!d.name.trim()){ this.say('ตั้งชื่อก่อน'); return }
       const row = { name:d.name.trim(), lender:d.lender||null, principal:+d.principal||0, monthly:+d.monthly||null, due_day:d.due_day||null, interest:d.interest??null, note:d.note||null, closed:false };
